@@ -1,23 +1,74 @@
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+# G4Vox
 
-# G4Vox — Build & Install Guide
+> **A Geant4 utility library for 3D voxel-based scoring**
 
-> Geant4 voxelization library wrapping `tomlplusplus` for TOML-based geometry configuration.
-
----
-
-## Prerequisites
-
-| Tool | Notes |
-|------|-------|
-| CMake ≥ 3.20 | [cmake.org](https://cmake.org) |
-| Visual Studio 2026 (v18) | with **Desktop C++ workload** |
-| Geant4 v11.3.2 (installed) | e.g. `C:/DEV/GEANT4/geant4-v11.3.2-install` |
-| vcpkg | [github.com/microsoft/vcpkg](https://github.com/microsoft/vcpkg) |
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/rtonneau/G4Vox/releases/tag/v0.1.0)
+[![Geant4](https://img.shields.io/badge/Geant4-11.3.2-red.svg)](https://geant4.web.cern.ch)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
 ---
 
-## Step 1 — Install tomlplusplus via vcpkg
+## Overview
+
+**G4Vox** is a lightweight C++ library built on top of [Geant4](https://geant4.web.cern.ch)
+that automates the voxelization of `G4Box` volumes and provides a structured
+framework for scoring and retrieving physical quantities resolved on a 3D voxel grid.
+
+     G4Box geometry
+           │
+           ▼
+┌──────────────────────┐
+│       G4Vox          │
+│  ┌──────────────┐    │
+│  │  Voxelizer   │    │   ──►  NX × NY × NZ grid
+│  └──────────────┘    │
+│  ┌──────────────┐    │
+│  │   G4VAccu    │    │   ──►  Dose / LET / ...
+│  └──────────────┘    │
+└──────────────────────┘
+           │
+           ▼
+    3D scored data
+    (retrievable per voxel)
+
+### Key features
+
+- 🔲 **Automatic voxelization** of any `G4Box` volume into a configurable NX × NY × NZ grid
+- 🔌 **Clean API** designed to integrate seamlessly into any Geant4 application
+- 🧩 **Modular design** — Design yourself the accumulator you need
+- ⚡ **Compatible with Geant4 11.3+**
+
+---
+
+## Requirements
+
+| Dependency | Minimum version | Notes              |
+|------------|-----------------|--------------------|
+| CMake      | 3.16            | Build system       |
+| C++        | 17              | Required by Geant4 |
+| Visual Studio 2026 (v18)     | with **Desktop C++ workload** |
+| Geant4     | 11.0            | Must be built with `GEANT4_BUILD_MULTITHREADED=ON` for MT support |
+| vcpkg      |                 | [github.com/microsoft/vcpkg](https://github.com/microsoft/vcpkg)  |
+
+> Tomlplusplus is used to produce manifest file containing simulation information.
+
+---
+
+## Build
+
+G4Vox uses a standard CMake workflow.
+
+### 1 — Clone
+
+```bash
+  git clone https://github.com/YOUR_USERNAME/G4Vox.git
+  cd G4Vox
+---
+
+### 2 — Configure
+
+### Step 1 — Install tomlplusplus via vcpkg
 
 Open a **Developer PowerShell** and run:
 
@@ -28,12 +79,12 @@ vcpkg install tomlplusplus:x64-windows
 Make sure your `VCPKG_ROOT` environment variable is set, e.g.:
 
 ```powershell
-$env:VCPKG_ROOT = "C:/vcpkg"
+  $env:VCPKG_ROOT = "C:/vcpkg"
 ```
 
 ---
 
-## Step 2 — Configure
+### Step 2 — Configure
 
 From the `G4Vox` source directory:
 
@@ -53,7 +104,7 @@ cmake .. `
 
 ---
 
-## Step 3 — Build
+### Step 3 — Build
 
 ```powershell
 cmake --build . --config RelWithDebInfo
@@ -61,7 +112,7 @@ cmake --build . --config RelWithDebInfo
 
 ---
 
-## Step 4 — Install
+### Step 4 — Install
 
 ```powershell
 cmake --install . --config RelWithDebInfo
@@ -82,9 +133,9 @@ G4Vox-install/
 
 ---
 
-## Step 5 — Use G4Vox in a consumer project
+### Step 5 — Use G4Vox in a consumer project
 
-### 5.1 — Update `CMakeLists.txt`
+#### 5.1 — Update `CMakeLists.txt`
 
 ```cmake
 find_package(G4Vox REQUIRED)
@@ -92,7 +143,7 @@ find_package(G4Vox REQUIRED)
 target_link_libraries(your_target PRIVATE G4Vox::G4Vox)
 ```
 
-### 5.2 — Update VSCode `settings.json`
+#### 5.2 — Update VSCode `settings.json`
 
 ```jsonc
 {
@@ -103,7 +154,7 @@ target_link_libraries(your_target PRIVATE G4Vox::G4Vox)
 }
 ```
 
-> Replace `C:/DEV/GEANT4/LIB/G4Vox-install` with your actual G4Vox install prefix if different.  
+> Replace `C:/DEV/GEANT4/LIB/G4Vox-install` with your actual G4Vox install prefix if different.
 > `G4_ROOT` should point to your Geant4 install root, e.g. `C:/DEV/GEANT4/geant4-v11.3.2-install`.
 
 ---
