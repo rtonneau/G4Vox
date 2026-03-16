@@ -105,23 +105,3 @@ target_link_libraries(your_target PRIVATE G4Vox::G4Vox)
 > `G4_ROOT` should point to your Geant4 install root, e.g. `C:/DEV/GEANT4/geant4-v11.3.2-install`.
 
 ---
-
-## Troubleshooting
-
-### `tomlplusplus::tomlplusplus` target not found
-
-Add `find_dependency(tomlplusplus REQUIRED)` in `cmake/G4VoxConfig.cmake.in` **before** the `include(G4VoxTargets.cmake)` line, then rebuild and reinstall.
-
-### LNK2005 — multiply defined symbols
-
-Method definitions must live in `.cc` files, **not** in headers.  
-Include guards (`#pragma once`) do not prevent linker duplicates across translation units.
-
----
-
-## Environment Variables Summary
-
-| Variable | Example value |
-|----------|--------------|
-| `G4_ROOT` | `C:/DEV/GEANT4/geant4-v11.3.2-install` |
-| `VCPKG_ROOT` | `C:/vcpkg` |
