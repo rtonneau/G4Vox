@@ -15,6 +15,7 @@
 that automates the voxelization of `G4Box` volumes and provides a structured
 framework for scoring and retrieving physical quantities resolved on a 3D voxel grid.
 
+```
      G4Box geometry
            │
            ▼
@@ -31,6 +32,7 @@ framework for scoring and retrieving physical quantities resolved on a 3D voxel 
            ▼
     3D scored data
     (retrievable per voxel)
+```
 
 ### Key features
 
