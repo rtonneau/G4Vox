@@ -1,0 +1,22 @@
+@PACKAGE_INIT@
+# ↑ This macro is mandatory. It provides helper macros like
+#   set_and_check() and check_required_components(), and it
+#   sets up the path variables relative to the install prefix.
+
+# ── Re-find Geant4 ────────────────────────────────────────────────────────────
+# When a consumer calls find_package(G4Vox), they get a project that
+# depends on Geant4. We must ensure Geant4 targets are available.
+# find_dependency() is like find_package() but propagates REQUIRED/QUIET
+# from the parent find_package() call automatically.
+include(CMakeFindDependencyMacro)
+
+find_dependency(Geant4 REQUIRED)
+find_dependency(tomlplusplus REQUIRED)
+
+# ── Import the targets ────────────────────────────────────────────────────────
+# This includes G4VoxTargets.cmake which defines G4Vox::G4Vox
+# as an IMPORTED STATIC library with all its properties.
+include("${CMAKE_CURRENT_LIST_DIR}/G4VoxTargets.cmake")
+
+# ── Sanity check ──────────────────────────────────────────────────────────────
+check_required_components(G4Vox)
