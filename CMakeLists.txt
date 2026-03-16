@@ -11,15 +11,17 @@ project(G4Vox
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# ── Find Geant4 ───────────────────────────────────────────────────────────────
-# Your voxel classes use G4 types (G4ThreeVector, G4Material, etc.)
-# so Geant4 is a real dependency of this library.
-# The consumer of G4Vox will also need Geant4, so we propagate it.
+# ── Generate version header ───────────────────────────────────────────────────
+configure_file(
+    cmake/G4VoxVersion.hh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/G4VoxVersion.hh
+)
+
+# ── Find dependencies ─────────────────────────────────────────────────────────
 find_package(Geant4 REQUIRED)
 #Look for toml++ library (installed by vcpkg)
 find_package(tomlplusplus CONFIG REQUIRED)
-# Note: we do NOT call include(${Geant4_USE_FILE}) here
-# That macro is for executables; for libraries we link targets properly.
+
 
 # ── Collect sources ───────────────────────────────────────────────────────────
 file(GLOB G4Vox_SOURCES
@@ -45,6 +47,7 @@ target_include_directories(G4Vox
     PUBLIC
     # At build time  → full source path
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
     # After install  → relative to install prefix
     $<INSTALL_INTERFACE:include>
 )
