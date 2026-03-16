@@ -66,9 +66,10 @@ G4Vox uses a standard CMake workflow.
 ```bash
   git clone https://github.com/YOUR_USERNAME/G4Vox.git
   cd G4Vox
+```
 ---
 
-### 2 — Configure
+### 2 — Install
 
 ### Step 1 — Install tomlplusplus via vcpkg
 
