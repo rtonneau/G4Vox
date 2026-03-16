@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "G4Vox"
+message: "If you use this software, please cite it as below."
+type: software
+
+authors:
+  - family-names: "Tonneau"
+    given-names: "Romain"
+    orcid: "https://orcid.org/0000-0002-3246-8420"
+    affiliation: "Université de Namur"
+
+repository-code: "https://github.com/rtonneau/G4Vox"
+license: MIT
+version: "0.1.0"
+date-released: "2026-03-16"
+
+abstract: >
+  G4Vox is a Geant4 utilitary library that automates the voxelization
+  of G4Box volumes and provides a structured framework for scoring and
+  retrieving physical quantities — such as dose, LET, particle
+  creation,... — resolved on a 3D voxel grid.
+
+keywords:
+  - Geant4
+  - voxelization
+  - Monte Carlo
+
