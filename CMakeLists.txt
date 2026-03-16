@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 # ── Project declaration ───────────────────────────────────────────────────────
 # VERSION is important: find_package(G4Vox 1.0 REQUIRED) will check it
 project(G4Vox
-    VERSION 1.0.0
+    VERSION 0.1.0
     DESCRIPTION "Voxelization library for Geant4-based simulations"
     LANGUAGES CXX
 )
