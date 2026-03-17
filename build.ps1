@@ -81,3 +81,5 @@ cmake --install . --config $Config
 if ($LASTEXITCODE -ne 0) { Write-Error "Install failed"; exit 1 }
 
 Write-Host "`nDone! Installed to: $InstallPrefix" -ForegroundColor Green
+
+Set-Location $PSScriptRoot

@@ -15,6 +15,7 @@ namespace G4Vox
 
   class VVoxQuantity
   {
+
   public:
     VVoxQuantity(const G4String &name) : fName(name) {}
 

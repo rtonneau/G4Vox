@@ -9,8 +9,12 @@ class G4Step;
 
 namespace G4Vox
 {
+    class VVoxQuantity;
+
     class VVoxQuantityAccumulable : public G4VAccumulable
     {
+        friend class VVoxQuantity; // for data access
+
     public:
         explicit VVoxQuantityAccumulable(const G4String &name, std::weak_ptr<const VoxelIndex> maxVoxIndex)
             : G4VAccumulable(name), fMaxVoxIndex(maxVoxIndex)
