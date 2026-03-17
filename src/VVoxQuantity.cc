@@ -4,7 +4,7 @@
 
 namespace G4Vox
 {
-    void VVoxQuantity::MergeAccumulable(const VVoxQuantityAccumulable &other)
+    void VVoxQuantity::ReadAccumulable(const VVoxQuantityAccumulable &other)
     {
         this->fData += other.GetData(); // valarray operator+= is element-wise ✓
     }

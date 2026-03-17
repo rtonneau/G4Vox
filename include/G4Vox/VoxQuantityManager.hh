@@ -47,7 +47,7 @@ namespace G4Vox
     void ComputeAll();
     void ResetAll();
     void StoreAll();
-    void MergeAccumulables();
+    void ReadAccumulables();
 
     VoxRegion *GetRegion(const G4String &regionName) const;
     VVoxQuantity *GetQuantity(const G4String &regionName,

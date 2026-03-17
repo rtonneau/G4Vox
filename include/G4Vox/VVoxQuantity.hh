@@ -36,7 +36,7 @@ namespace G4Vox
     // Cross-events accumulation — master thread only
     //------------------------------------------------------------------
     /** Absorb one thread's accumulable into the persistent store. */
-    virtual void MergeAccumulable(const VVoxQuantityAccumulable &other);
+    virtual void ReadAccumulable(const VVoxQuantityAccumulable &other);
 
     /** Called after all threads merged. e.g. edep → dose. */
     virtual void Compute() = 0;

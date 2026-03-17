@@ -133,13 +133,13 @@ namespace G4Vox
         for (auto &name : fOrderedRegions)
             this->fRegions.at(name)->StoreAll(this->GetRootPath());
     }
-    void VoxQuantityManager::MergeAccumulables()
+    void VoxQuantityManager::ReadAccumulables()
     {
         for (auto &name : fOrderedRegions)
         {
             auto &region = this->fRegions.at(name);
             for (size_t idx = 0; idx < region->quantities.size(); ++idx)
-                region->quantities[idx]->MergeAccumulable(*region->accumulables[idx]);
+                region->quantities[idx]->ReadAccumulable(*region->accumulables[idx]);
         }
     }
     VoxRegion *VoxQuantityManager::GetRegion(const G4String &regionName) const
