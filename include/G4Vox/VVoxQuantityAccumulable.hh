@@ -29,14 +29,14 @@ namespace G4Vox
         //------------------------------------------------------------------
 
         /** Default Merge: element-wise addition of fData arrays. */
-        void Merge(const G4VAccumulable &other) override
+        virtual void Merge(const G4VAccumulable &other) override
         {
             const auto &o = static_cast<const VVoxQuantityAccumulable &>(other);
             this->fData += o.fData; // valarray operator+= is element-wise ✓
         }
 
         /** Default Reset: zero all bins. */
-        void Reset() override
+        virtual void Reset() override
         {
             if (this->fInitialized)
             {
@@ -55,14 +55,14 @@ namespace G4Vox
         //------------------------------------------------------------------
         // Data access
         //------------------------------------------------------------------
-        const G4Vox::array_type &GetData() const
+        virtual const G4Vox::array_type &GetData() const
         {
             return this->fData;
         }
-        G4double GetData(std::size_t i) const { return this->fData[i]; }
+        virtual G4double GetData(std::size_t i) const { return this->fData[i]; }
 
     protected:
-        void Initialize()
+        virtual void Initialize()
         {
             auto maxVox = this->fMaxVoxIndex.lock();
             this->fNx = maxVox->x() + 1;

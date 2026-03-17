@@ -36,7 +36,7 @@ namespace G4Vox
     // Cross-events accumulation — master thread only
     //------------------------------------------------------------------
     /** Absorb one thread's accumulable into the persistent store. */
-    void MergeAccumulable(const VVoxQuantityAccumulable &other);
+    virtual void MergeAccumulable(const VVoxQuantityAccumulable &other);
 
     /** Called after all threads merged. e.g. edep → dose. */
     virtual void Compute() = 0;
@@ -45,10 +45,10 @@ namespace G4Vox
     virtual void Store(G4String path = ".") = 0;
 
     /** Zero the persistent store at BeginOfRun. */
-    void InitializeQuantity();
-    void Reset();
+    virtual void InitializeQuantity();
+    virtual void Reset();
 
-    void StoreVTI(G4String path = ".");
+    virtual void StoreVTI(G4String path = ".");
 
     //------------------------------------------------------------------
     // Config
