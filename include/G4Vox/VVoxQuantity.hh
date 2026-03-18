@@ -27,11 +27,7 @@ namespace G4Vox
     /** Spawn a thread-local scorer pre-configured from this object's settings. */
     virtual VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const = 0;
 
-    VVoxQuantityAccumulable *CreateAccumulable() const
-    {
-      const G4String accName = this->fDetectorName + "/" + this->fName;
-      return this->UserCreateAccumulable(accName);
-    }
+    VVoxQuantityAccumulable *CreateAccumulable() const;
 
     //------------------------------------------------------------------
     // Cross-events accumulation — master thread only
@@ -54,6 +50,10 @@ namespace G4Vox
     //------------------------------------------------------------------
     // Config
     //------------------------------------------------------------------
+    void SetAccumulate(bool accumulate) { this->fAccumulate = accumulate; }
+    bool GetAccumulate() const { return this->fAccumulate; }
+    bool IsInitialized() const { return this->fInitialized; }
+
     const G4String &GetName() const
     {
       return fName;
@@ -76,6 +76,8 @@ namespace G4Vox
     //------------------------------------------------------------------
     // Others
     //------------------------------------------------------------------
+    const G4Vox::array_type &GetData() const { return this->fData; }
+
     size_t TotalVoxels() const
     {
       auto idx = this->GetMaxVoxIndex().lock(); // promotes to temporary shared_ptr
@@ -93,13 +95,15 @@ namespace G4Vox
     G4String fName;
     G4String fDetectorName;
     G4int fVerboseLevel = 0;
-    G4bool fInitialized = false;
+    G4bool fInitialized = false; // Whether InitializeQuantity has been called at least once
     G4bool fSaved = false;
     G4bool fComputed = false;
     G4bool fComputationEnabled = false;
+    G4bool fAccumulate = false;                   // Whether to accumulate across runs, set by VoxQuantityManager
     G4Vox::array_type fData;                      // ← default store, subclass fills it
     const VoxGeometry *fLinkedGeometry = nullptr; // for easy access to geometry info in Compute()
     std::vector<G4String> fStoredFiles;
+
     // Persistent data arrays live in the concrete subclass
     // e.g. std::valarray<G4double> fDose;
   };

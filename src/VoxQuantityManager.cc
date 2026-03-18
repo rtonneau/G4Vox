@@ -104,19 +104,10 @@ namespace G4Vox
         accMgr->Reset();
     }
 
-    void VoxQuantityManager::CallMergeG4Accumulables()
+    void VoxQuantityManager::InitializeAll()
     {
-        auto *accMgr = G4AccumulableManager::Instance();
-        accMgr->Merge();
-    }
-
-    void VoxQuantityManager::InitializeAll(bool accumulate)
-    {
-        if (this->fisInitialized && accumulate)
-            return;
         for (auto &name : fOrderedRegions)
             this->fRegions.at(name)->InitializeAll();
-        this->fisInitialized = true;
     }
 
     void VoxQuantityManager::ComputeAll()
@@ -134,8 +125,22 @@ namespace G4Vox
     void VoxQuantityManager::StoreAll()
     {
         for (auto &name : fOrderedRegions)
-            this->fRegions.at(name)->StoreAll(this->GetRootPath() + this->GetPrefix());
+            this->fRegions.at(name)->StoreAll(this->GetFullRootPath());
     }
+
+    void VoxQuantityManager::StoreAllVTI()
+    {
+        for (const auto &regionName : this->fOrderedRegions)
+        {
+            auto it = this->fRegions.find(regionName);
+            if (it == this->fRegions.end())
+                continue;
+
+            G4String file_path = this->GetFullRootPath() + regionName + this->GetPostfix() + ".vti";
+            it->second->ExportToVTI(file_path);
+        }
+    }
+
     void VoxQuantityManager::ReadAccumulables()
     {
         for (auto &name : fOrderedRegions)
@@ -187,6 +192,32 @@ namespace G4Vox
         }
 
         this->fRootPath = path + "/";
+    }
+
+    std::vector<std::pair<G4String, VoxRegion *>> VoxQuantityManager::GetAllRegionsOrdered() const
+    {
+        std::vector<std::pair<G4String, VoxRegion *>> regions;
+        for (const auto &regionName : this->fOrderedRegions)
+        {
+            auto it = this->fRegions.find(regionName);
+            if (it != this->fRegions.end())
+            {
+                regions.emplace_back(regionName, it->second.get());
+            }
+        }
+        return regions;
+    }
+
+    std::vector<std::pair<G4String, VVoxQuantity *>> VoxQuantityManager::GetAllQuantitiesOrdered() const
+    {
+        std::vector<std::pair<G4String, VVoxQuantity *>> result;
+        for (const auto &regionName : fOrderedRegions)
+        {
+            const VoxRegion &region = *fRegions.at(regionName);
+            for (size_t i = 0; i < region.quantities.size(); ++i)
+                result.emplace_back(region.orderedNames[i], region.quantities[i].get());
+        }
+        return result;
     }
 
     std::string VoxQuantityManager::Print() const
@@ -265,6 +296,13 @@ namespace G4Vox
             regTable.insert("vox_size_unit", ux.c_str());
             regTable.insert("origin", toml::array{ox, oy, oz});
             regTable.insert("origin_unit", uox.c_str());
+            toml::array filesArray;
+            for (auto f : region.GetStoredFiles())
+            {
+                std::replace(f.begin(), f.end(), '\\', '/');
+                filesArray.push_back(f.c_str());
+            }
+            regTable.insert("files", std::move(filesArray));
 
             // ── quantities sub-array ──────────────────────────────────────
             toml::array qtiesArray;
@@ -273,13 +311,14 @@ namespace G4Vox
                 toml::table qtyTable;
                 qtyTable.insert("name", qty->GetName().c_str());
 
-                toml::array filesArray;
+                toml::array filesArrayQty;
                 for (auto f : qty->GetStoredFiles())
                 {
                     std::replace(f.begin(), f.end(), '\\', '/');
-                    filesArray.push_back(f.c_str());
+                    filesArrayQty.push_back(f.c_str());
                 }
-                qtyTable.insert("files", std::move(filesArray));
+                qtyTable.insert("files", std::move(filesArrayQty));
+                qtyTable.insert("Accumulate", qty->GetAccumulate());
                 qtiesArray.push_back(std::move(qtyTable));
             }
             regTable.insert("quantities", std::move(qtiesArray));
@@ -289,4 +328,5 @@ namespace G4Vox
         }
         G4cout << "[VoxQuantityManager] Manifest entries added to TOMLManager" << G4endl;
     }
+
 } // End of namespace G4Vox

@@ -16,6 +16,7 @@ namespace G4Vox
         std::vector<G4String> orderedNames;
         std::vector<std::unique_ptr<VVoxQuantity>> quantities;
         std::vector<std::unique_ptr<VVoxQuantityAccumulable>> accumulables;
+        std::vector<G4String> fStoredFiles;
 
         void Register(std::unique_ptr<VVoxQuantity> q);
         void InitializeAll()
@@ -38,6 +39,11 @@ namespace G4Vox
             for (auto &q : this->quantities)
                 q->Reset();
         }
+
+        void RegisterOutputFile(const G4String &filePath) { this->fStoredFiles.push_back(filePath); }
+        const std::vector<G4String> &GetStoredFiles() const { return this->fStoredFiles; }
+
+        void ExportToVTI(const G4String &filePath);
         size_t Size() const { return this->quantities.size(); }
         std::string Print(const std::string &indent = "") const;
     };

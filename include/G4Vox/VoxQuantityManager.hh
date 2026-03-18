@@ -40,13 +40,13 @@ namespace G4Vox
     // Interactions with G4AccumulableManager
     void RegisterAllAccumulables();
     void CallResetG4Accumulables();
-    void CallMergeG4Accumulables();
 
     // run lifecycle
-    void InitializeAll(bool accumulate = true);
+    void InitializeAll();
     void ComputeAll();
     void ResetAll();
     void StoreAll();
+    void StoreAllVTI();
     void ReadAccumulables();
 
     VoxRegion *GetRegion(const G4String &regionName) const;
@@ -57,15 +57,27 @@ namespace G4Vox
     const std::vector<G4String> &GetOrderedRegions() const { return this->fOrderedRegions; }
     std::string Print() const;
     void WriteManifest() const;
+
     void SetPrefix(const G4String &prefix) { this->fPrefix = prefix; }
     const G4String &GetPrefix() const { return this->fPrefix; }
+    void SetPostfix(const G4String &postfix) { this->fPostfix = postfix; }
+    const G4String &GetPostfix() const { return this->fPostfix; }
+    const G4String GetFullRootPath() const { return this->fRootPath + this->fPrefix; }
+
+    void RegisterOutputFile(const G4String &filePath) { this->fStoredFiles.push_back(filePath); }
+    const std::vector<G4String> &GetStoredFiles() const { return this->fStoredFiles; }
+
+    // Iterate
+    std::vector<std::pair<G4String, VoxRegion *>> GetAllRegionsOrdered() const;
+    std::vector<std::pair<G4String, VVoxQuantity *>> GetAllQuantitiesOrdered() const;
 
   private:
     std::vector<G4String> fOrderedRegions;
     std::map<G4String, std::unique_ptr<VoxRegion>> fRegions;
     G4String fRootPath = ".";
     G4String fPrefix = "";
-    G4bool fisInitialized = false;
+    G4String fPostfix = "";
+    std::vector<G4String> fStoredFiles;
 
     inline static VoxQuantityManager *fInstance = nullptr;
   };

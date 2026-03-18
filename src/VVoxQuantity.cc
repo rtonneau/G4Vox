@@ -4,6 +4,15 @@
 
 namespace G4Vox
 {
+
+    VVoxQuantityAccumulable *VVoxQuantity::CreateAccumulable() const
+    {
+        const G4String accName = this->fDetectorName + "/" + this->fName;
+        VVoxQuantityAccumulable *acc = this->UserCreateAccumulable(accName);
+        acc->Initialize(); // Make sure to allocate fData.
+        return acc;
+    }
+
     void VVoxQuantity::ReadAccumulable(const VVoxQuantityAccumulable &other)
     {
         this->fData += other.GetData(); // valarray operator+= is element-wise ✓
@@ -11,14 +20,17 @@ namespace G4Vox
 
     void VVoxQuantity::Reset()
     {
-        if (this->fInitialized)
+        if (!this->fInitialized)
+        {
+            this->InitializeQuantity();
+            return;
+        }
+
+        if (!this->fAccumulate)
         {
             this->fData = 0.; // valarray broadcast assign ✓
             this->fComputed = false;
-        }
-        else
-        {
-            this->InitializeQuantity();
+            return;
         }
     }
 
