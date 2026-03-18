@@ -110,10 +110,13 @@ namespace G4Vox
         accMgr->Merge();
     }
 
-    void VoxQuantityManager::InitializeAll()
+    void VoxQuantityManager::InitializeAll(bool accumulate)
     {
+        if (this->fisInitialized && accumulate)
+            return;
         for (auto &name : fOrderedRegions)
             this->fRegions.at(name)->InitializeAll();
+        this->fisInitialized = true;
     }
 
     void VoxQuantityManager::ComputeAll()
@@ -131,7 +134,7 @@ namespace G4Vox
     void VoxQuantityManager::StoreAll()
     {
         for (auto &name : fOrderedRegions)
-            this->fRegions.at(name)->StoreAll(this->GetRootPath());
+            this->fRegions.at(name)->StoreAll(this->GetRootPath() + this->GetPrefix());
     }
     void VoxQuantityManager::ReadAccumulables()
     {
@@ -183,7 +186,7 @@ namespace G4Vox
                    << path << G4endl;
         }
 
-        this->fRootPath = path;
+        this->fRootPath = path + "/";
     }
 
     std::string VoxQuantityManager::Print() const

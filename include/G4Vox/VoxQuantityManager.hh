@@ -43,7 +43,7 @@ namespace G4Vox
     void CallMergeG4Accumulables();
 
     // run lifecycle
-    void InitializeAll();
+    void InitializeAll(bool accumulate = true);
     void ComputeAll();
     void ResetAll();
     void StoreAll();
@@ -57,11 +57,15 @@ namespace G4Vox
     const std::vector<G4String> &GetOrderedRegions() const { return this->fOrderedRegions; }
     std::string Print() const;
     void WriteManifest() const;
+    void SetPrefix(const G4String &prefix) { this->fPrefix = prefix; }
+    const G4String &GetPrefix() const { return this->fPrefix; }
 
   private:
     std::vector<G4String> fOrderedRegions;
     std::map<G4String, std::unique_ptr<VoxRegion>> fRegions;
     G4String fRootPath = ".";
+    G4String fPrefix = "";
+    G4bool fisInitialized = false;
 
     inline static VoxQuantityManager *fInstance = nullptr;
   };

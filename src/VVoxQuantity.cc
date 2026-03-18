@@ -31,7 +31,7 @@ namespace G4Vox
 
     void VVoxQuantity::StoreVTI(G4String path)
     {
-        G4String file_path = path + "/" + this->GetDetectorName() + "_" + this->GetName() + ".vti";
+        G4String file_path = path + this->GetDetectorName() + "_" + this->GetName() + ".vti";
         std::ofstream ofs(file_path);
 
         auto nVox = this->GetGeometry()->GetMaxVoxIndex().lock();
