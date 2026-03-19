@@ -5,6 +5,7 @@
 #include "G4Vox/VoxSD.hh"
 #include "G4Vox/VoxUtils.hh"
 #include "G4Vox/TOMLManager.hh"
+#include "G4Vox/VoxQuantityMessenger.hh"
 
 #include "G4AccumulableManager.hh"
 
@@ -23,6 +24,9 @@ namespace G4Vox
         if (VoxQuantityManager::fInstance == nullptr)
         {
             VoxQuantityManager::fInstance = new VoxQuantityManager();
+            // Messenger is created once, right after the singleton itself
+            VoxQuantityManager::fInstance->fMessenger =
+                std::make_unique<VoxQuantityMessenger>(VoxQuantityManager::fInstance);
         }
         return VoxQuantityManager::fInstance;
     }
@@ -192,6 +196,18 @@ namespace G4Vox
         }
 
         this->fRootPath = path + "/";
+    }
+
+    void VoxQuantityManager::ResetManager()
+    {
+        // Clear files
+        this->fStoredFiles.clear();
+        this->InitializeAll(); // also resets quantities
+        for (auto &regionName : this->fOrderedRegions)
+        {
+            auto &region = this->fRegions.at(regionName);
+            region->fStoredFiles.clear();
+        }
     }
 
     std::vector<std::pair<G4String, VoxRegion *>> VoxQuantityManager::GetAllRegionsOrdered() const

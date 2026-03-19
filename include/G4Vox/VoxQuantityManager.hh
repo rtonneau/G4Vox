@@ -5,8 +5,6 @@
 #include <map>
 #include "G4Step.hh"
 
-class VoxQuantityManagerMessenger;
-
 namespace G4Vox
 {
   class VVoxQuantity;
@@ -14,6 +12,8 @@ namespace G4Vox
   class VoxGeometry;
   struct VoxRegion;
   class VoxSD;
+
+  class VoxQuantityMessenger;
 
   class VoxQuantityManager
   {
@@ -67,6 +67,8 @@ namespace G4Vox
     void RegisterOutputFile(const G4String &filePath) { this->fStoredFiles.push_back(filePath); }
     const std::vector<G4String> &GetStoredFiles() const { return this->fStoredFiles; }
 
+    void ResetManager();
+
     // Iterate
     std::vector<std::pair<G4String, VoxRegion *>> GetAllRegionsOrdered() const;
     std::vector<std::pair<G4String, VVoxQuantity *>> GetAllQuantitiesOrdered() const;
@@ -80,6 +82,8 @@ namespace G4Vox
     std::vector<G4String> fStoredFiles;
 
     inline static VoxQuantityManager *fInstance = nullptr;
+
+    std::unique_ptr<VoxQuantityMessenger> fMessenger;
   };
 }
 

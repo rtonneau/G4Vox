@@ -90,6 +90,7 @@ namespace G4Vox
     double Sum() const { return this->fData.sum(); }
     void RegisterOutputFile(const G4String &filePath) { this->fStoredFiles.push_back(filePath); }
     const std::vector<G4String> &GetStoredFiles() const { return this->fStoredFiles; }
+    void ClearStoredFiles() { this->fStoredFiles.clear(); }
 
   protected:
     G4String fName;

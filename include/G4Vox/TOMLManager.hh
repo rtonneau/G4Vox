@@ -17,6 +17,9 @@ namespace G4Vox
         void SetRootPath(const G4String &path) { fRootPath = path; }
         G4String GetRootPath() const { return fRootPath; }
 
+        // ── clean ─────────────────────────────────────────────────
+        void CleanTOMLData();
+
         // ── write to tree ─────────────────────────────────────────
         // Set a scalar:   Set("run_manager.num_events", 10000)
         template <typename T>
@@ -36,7 +39,7 @@ namespace G4Vox
         void AppendTable(const std::string &arrayKey, toml::table &&table);
         void AppendTable(const std::string &parentKey, const std::string &arrayKey, toml::table &&table);
         // ── output ────────────────────────────────────────────────
-        void Write(const G4String &filename = "Geant4_manifest.toml") const;
+        void Write(const G4String &filename = "Geant4_manifest.toml");
 
     private:
         TOMLManager() = default;

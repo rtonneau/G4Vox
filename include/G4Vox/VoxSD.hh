@@ -22,7 +22,10 @@ namespace G4Vox
         void InitializeAll()
         {
             for (auto &q : this->quantities)
+            {
                 q->InitializeQuantity();
+                q->ClearStoredFiles();
+            }
         }
         void ComputeAll()
         {

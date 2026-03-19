@@ -38,6 +38,11 @@ namespace G4Vox
         return *node;
     }
 
+    void TOMLManager::CleanTOMLData()
+    {
+        this->fDocument = toml::table{};
+    }
+
     // ── Set scalar ────────────────────────────────────────────────
     // template <typename T>
     // void TOMLManager::Set(const std::string &dotPath, T &&value)
@@ -94,7 +99,7 @@ namespace G4Vox
     }
 
     // ── Write ─────────────────────────────────────────────────────
-    void TOMLManager::Write(const G4String &filename) const
+    void TOMLManager::Write(const G4String &filename)
     {
         G4String filePath = fRootPath + "/" + filename;
         std::ofstream out(filePath);
@@ -105,6 +110,7 @@ namespace G4Vox
         }
         out << fDocument;
         G4cout << "[TOMLManager] Written to: " << filePath << G4endl;
+        this->CleanTOMLData();
     }
 
 } // namespace G4Vox
