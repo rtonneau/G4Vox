@@ -1,5 +1,7 @@
 // TOMLManager.cc
 #include "G4Vox/TOMLManager.hh"
+#include "G4Vox/VoxUtils.hh"
+
 #include <fstream>
 #include <sstream>
 #include "G4ios.hh"
@@ -13,6 +15,11 @@ namespace G4Vox
         if (!fInstance)
             fInstance = new TOMLManager();
         return fInstance;
+    }
+
+    void TOMLManager::SetRootPath(const G4String &path)
+    {
+        this->fRootPath = PathUtils::EnsureTrailingSlash(path);
     }
 
     // ── resolve "a.b.c" creating sub-tables as needed ─────────────
@@ -101,7 +108,7 @@ namespace G4Vox
     // ── Write ─────────────────────────────────────────────────────
     void TOMLManager::Write(const G4String &filename)
     {
-        G4String filePath = fRootPath + "/" + filename;
+        G4String filePath = fRootPath + filename;
         std::ofstream out(filePath);
         if (!out.is_open())
         {

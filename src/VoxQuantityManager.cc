@@ -162,10 +162,10 @@ namespace G4Vox
         return it->second.get();
     }
 
-    const G4String VoxQuantityManager::GetFullRootPath() const
+    const G4String VoxQuantityManager::GetLocalPath() const
     {
         if (this->fSubFolder.empty())
-            return this->fRootPath + this->fPrefix;
+            return this->fRootPath;
         else
             return this->fRootPath + this->fSubFolder;
     }
@@ -212,7 +212,11 @@ namespace G4Vox
     void VoxQuantityManager::SetSubFolder(const G4String &subFolder)
     {
         this->fSubFolder = PathUtils::EnsureTrailingSlash(subFolder);
-        auto fullPath = this->GetFullRootPath();
+        if (this->fVerboseLevel > 0)
+            G4cout << "[VoxQuantityManager] Subfolder set to: " << this->fSubFolder << G4endl;
+        auto fullPath = this->GetLocalPath();
+        if (this->fVerboseLevel > 0)
+            G4cout << "[VoxQuantityManager] Full local path is now: " << fullPath << G4endl;
         PathUtils::CreateDirectoryIfNotExists(fullPath, this->fVerboseLevel);
     }
 

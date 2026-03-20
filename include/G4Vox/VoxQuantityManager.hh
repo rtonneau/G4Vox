@@ -68,8 +68,8 @@ namespace G4Vox
     const G4String &GetPrefix() const { return this->fPrefix; }
     void SetPostfix(const G4String &postfix) { this->fPostfix = postfix; }
     const G4String &GetPostfix() const { return this->fPostfix; }
-    const G4String GetFullRootPath() const;
-    const G4String GetFullPathForNewFile() const { return this->GetFullRootPath() + this->fPrefix; }
+    const G4String GetLocalPath() const;
+    const G4String GetFullPathForNewFile() const { return this->GetLocalPath() + this->fPrefix; }
 
     void RegisterOutputFile(const G4String &filePath) { this->fStoredFiles.push_back(filePath); }
     const std::vector<G4String> &GetStoredFiles() const { return this->fStoredFiles; }
@@ -88,7 +88,7 @@ namespace G4Vox
     G4String fPrefix = "";
     G4String fPostfix = "";
     std::vector<G4String> fStoredFiles;
-    G4int fVerboseLevel = 0;
+    G4int fVerboseLevel = 4;
 
     inline static VoxQuantityManager *fInstance = nullptr;
 

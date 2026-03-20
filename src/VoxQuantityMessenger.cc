@@ -99,15 +99,15 @@ namespace G4Vox
         {
             fManager->SetSubFolder(newValue);
             if (fManager->GetVerboseLevel() > 0)
-                G4cout << "[VoxQuantityMessenger] New subfolder set. Full root path is now: "
-                       << fManager->GetFullRootPath() << G4endl;
+                G4cout << "[VoxQuantityMessenger] New subfolder set. Local path is now: "
+                       << fManager->GetLocalPath() << G4endl;
         }
         else if (command == fLeaveSubFolderCmd.get())
         {
             fManager->SetSubFolder("");
             if (fManager->GetVerboseLevel() > 0)
-                G4cout << "[VoxQuantityMessenger] Left subfolder. Full root path is now: "
-                       << fManager->GetFullRootPath() << G4endl;
+                G4cout << "[VoxQuantityMessenger] Left subfolder. Local path is now: "
+                       << fManager->GetLocalPath() << G4endl;
         }
         else
         {

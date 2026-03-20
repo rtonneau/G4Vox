@@ -14,7 +14,7 @@ namespace G4Vox
         static TOMLManager *GetInstance();
 
         // ── path ──────────────────────────────────────────────────
-        void SetRootPath(const G4String &path) { fRootPath = path; }
+        void SetRootPath(const G4String &path);
         G4String GetRootPath() const { return fRootPath; }
 
         // ── clean ─────────────────────────────────────────────────

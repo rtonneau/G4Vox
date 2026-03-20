@@ -15,6 +15,13 @@ namespace G4Vox
     {
         namespace fs = std::filesystem;
 
+        G4String NormalizeSeparators(const G4String &path)
+        {
+            std::string s(path);
+            std::replace(s.begin(), s.end(), '\\', '/');
+            return G4String(s);
+        }
+
         /**
          * @brief Ensures a directory path ends with a trailing separator.
          *
@@ -35,12 +42,11 @@ namespace G4Vox
             if (path.empty())
                 return "./";
 
-            const char last = path.back();
+            G4String norm = NormalizeSeparators(path);
+            if (norm.back() != '/')
+                norm += '/';
 
-            if (last == '/' || last == '\\')
-                return path;
-
-            return path + '/';
+            return norm;
         }
 
         /**
@@ -95,7 +101,14 @@ namespace G4Vox
          */
         G4bool CreateDirectoryIfNotExists(const G4String &path, G4int verboseLevel)
         {
-            const fs::path fsPath(path.c_str());
+            if (verboseLevel >= 3)
+                G4cout << "[CreateDirectoryIfNotExists] Checking path: " << path << G4endl;
+            // Strip trailing slash so parent_path() works correctly
+            // "D:/DATA/Geant4/260320/run1_50keV/"  -> "D:/DATA/Geant4/260320/run1_50keV"
+            // "D:/DATA/Geant4/260320/run1_50keV"   -> unchanged
+            fs::path fsPath(path.c_str());
+            if (fsPath.has_filename() == false) // ends with separator
+                fsPath = fsPath.parent_path();  // strips the trailing slash
 
             // --- Already exists ---
             if (fs::exists(fsPath))
