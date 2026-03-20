@@ -88,7 +88,7 @@ namespace G4Vox
     G4String fPrefix = "";
     G4String fPostfix = "";
     std::vector<G4String> fStoredFiles;
-    G4int fVerboseLevel = 4;
+    G4int fVerboseLevel = 0;
 
     inline static VoxQuantityManager *fInstance = nullptr;
 
