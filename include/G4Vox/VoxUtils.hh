@@ -94,5 +94,14 @@ namespace G4Vox
         }
     };
 
+    namespace PathUtils
+    {
+        G4String EnsureTrailingSlash(const G4String &path);
+        G4bool CreateDirectoryIfNotExists(const G4String &path, G4int verboseLevel = 0);
+        G4bool IsDirectory(const G4String &path);
+        G4bool IsFile(const G4String &path);
+        G4bool Exists(const G4String &path);
+    }
+
 }
 #endif

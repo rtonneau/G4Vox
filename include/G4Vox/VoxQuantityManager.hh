@@ -52,8 +52,14 @@ namespace G4Vox
     VoxRegion *GetRegion(const G4String &regionName) const;
     VVoxQuantity *GetQuantity(const G4String &regionName,
                               const G4String &quantityName) const;
+
+    void SetVerboseLevel(G4int level) { this->fVerboseLevel = level; }
+    G4int GetVerboseLevel() const { return this->fVerboseLevel; }
     void SetRootPath(const G4String &path);
     const G4String &GetRootPath() const { return this->fRootPath; }
+    void SetSubFolder(const G4String &subFolder);
+    const G4String &GetSubFolder() const { return this->fSubFolder; }
+
     const std::vector<G4String> &GetOrderedRegions() const { return this->fOrderedRegions; }
     std::string Print() const;
     void WriteManifest() const;
@@ -62,7 +68,8 @@ namespace G4Vox
     const G4String &GetPrefix() const { return this->fPrefix; }
     void SetPostfix(const G4String &postfix) { this->fPostfix = postfix; }
     const G4String &GetPostfix() const { return this->fPostfix; }
-    const G4String GetFullRootPath() const { return this->fRootPath + this->fPrefix; }
+    const G4String GetFullRootPath() const;
+    const G4String GetFullPathForNewFile() const { return this->GetFullRootPath() + this->fPrefix; }
 
     void RegisterOutputFile(const G4String &filePath) { this->fStoredFiles.push_back(filePath); }
     const std::vector<G4String> &GetStoredFiles() const { return this->fStoredFiles; }
@@ -77,9 +84,11 @@ namespace G4Vox
     std::vector<G4String> fOrderedRegions;
     std::map<G4String, std::unique_ptr<VoxRegion>> fRegions;
     G4String fRootPath = ".";
+    G4String fSubFolder = "";
     G4String fPrefix = "";
     G4String fPostfix = "";
     std::vector<G4String> fStoredFiles;
+    G4int fVerboseLevel = 0;
 
     inline static VoxQuantityManager *fInstance = nullptr;
 

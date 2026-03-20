@@ -129,7 +129,7 @@ namespace G4Vox
     void VoxQuantityManager::StoreAll()
     {
         for (auto &name : fOrderedRegions)
-            this->fRegions.at(name)->StoreAll(this->GetFullRootPath());
+            this->fRegions.at(name)->StoreAll(this->GetFullPathForNewFile());
     }
 
     void VoxQuantityManager::StoreAllVTI()
@@ -140,7 +140,7 @@ namespace G4Vox
             if (it == this->fRegions.end())
                 continue;
 
-            G4String file_path = this->GetFullRootPath() + regionName + this->GetPostfix() + ".vti";
+            G4String file_path = this->GetFullPathForNewFile() + regionName + this->GetPostfix() + ".vti";
             it->second->ExportToVTI(file_path);
         }
     }
@@ -162,52 +162,75 @@ namespace G4Vox
         return it->second.get();
     }
 
+    const G4String VoxQuantityManager::GetFullRootPath() const
+    {
+        if (this->fSubFolder.empty())
+            return this->fRootPath + this->fPrefix;
+        else
+            return this->fRootPath + this->fSubFolder;
+    }
+
     void VoxQuantityManager::SetRootPath(const G4String &path)
     {
-        namespace fs = std::filesystem;
-
-        fs::path p(path.c_str());
-
-        if (!fs::exists(p))
+        if (PathUtils::Exists(path))
         {
-            G4cout << "[VoxQuantityManager] Directory not found, creating: "
-                   << path << G4endl;
+            if (!PathUtils::IsDirectory(path))
+            {
+                G4Exception("VoxQuantityManager::SetRootPath",
+                            "VOXMGR_002",
+                            FatalException,
+                            ("Path exists but is NOT a directory: " + path).c_str());
+            }
 
-            if (!fs::create_directories(p))
+            if (fVerboseLevel >= 2)
+                G4cout << "[VoxQuantityManager] Directory already exists: "
+                       << path << G4endl;
+        }
+        else
+        {
+            if (fVerboseLevel >= 1)
+                G4cout << "[VoxQuantityManager] Directory not found, creating: "
+                       << path << G4endl;
+
+            const G4bool created = PathUtils::CreateDirectoryIfNotExists(path, fVerboseLevel);
+
+            if (!created)
             {
                 G4Exception("VoxQuantityManager::SetRootPath",
                             "VOXMGR_001",
                             FatalException,
                             ("Failed to create directory: " + path).c_str());
             }
-            G4cout << "[VoxQuantityManager] Directory created OK." << G4endl;
-        }
-        else if (!fs::is_directory(p))
-        {
-            G4Exception("VoxQuantityManager::SetRootPath",
-                        "VOXMGR_002",
-                        FatalException,
-                        ("Path exists but is NOT a directory: " + path).c_str());
-        }
-        else
-        {
-            G4cout << "[VoxQuantityManager] Directory already exists: "
-                   << path << G4endl;
+
+            if (fVerboseLevel >= 1)
+                G4cout << "[VoxQuantityManager] Directory created OK." << G4endl;
         }
 
-        this->fRootPath = path + "/";
+        this->fRootPath = PathUtils::EnsureTrailingSlash(path);
+    }
+
+    void VoxQuantityManager::SetSubFolder(const G4String &subFolder)
+    {
+        this->fSubFolder = PathUtils::EnsureTrailingSlash(subFolder);
+        auto fullPath = this->GetFullRootPath();
+        PathUtils::CreateDirectoryIfNotExists(fullPath, this->fVerboseLevel);
     }
 
     void VoxQuantityManager::ResetManager()
     {
+
+        this->InitializeAll(); // also resets quantities
+        if (this->fVerboseLevel > 0)
+            G4cout << "[VoxQuantityManager] All quantities have been reset." << G4endl;
         // Clear files
         this->fStoredFiles.clear();
-        this->InitializeAll(); // also resets quantities
         for (auto &regionName : this->fOrderedRegions)
         {
             auto &region = this->fRegions.at(regionName);
             region->fStoredFiles.clear();
         }
+        if (this->fVerboseLevel > 0)
+            G4cout << "[VoxQuantityManager] Stored file lists have been cleared." << G4endl;
     }
 
     std::vector<std::pair<G4String, VoxRegion *>> VoxQuantityManager::GetAllRegionsOrdered() const
@@ -342,7 +365,8 @@ namespace G4Vox
             // ── push into [[regions]] ─────────────────────────────────────
             toml->AppendTable("VoxQuantityManager", "regions", std::move(regTable));
         }
-        G4cout << "[VoxQuantityManager] Manifest entries added to TOMLManager" << G4endl;
+        if (this->fVerboseLevel > 0)
+            G4cout << "[VoxQuantityManager] Manifest entries added to TOMLManager" << G4endl;
     }
 
 } // End of namespace G4Vox

@@ -1,5 +1,6 @@
 #include "G4Vox/VoxQuantityMessenger.hh"
 #include "G4Vox/VoxQuantityManager.hh"
+#include "G4Vox/VoxUtils.hh"
 
 #include "G4UImanager.hh"
 
@@ -36,6 +37,31 @@ namespace G4Vox
             "/voxmgr/reset", this);
         fResetManagerCmd->SetGuidance("Call VoxQuantityManager::ResetManager().");
         fResetManagerCmd->AvailableForStates(G4State_Idle);
+
+        // ── /voxmgr/setVerboseLevel <int> ───────────────────────────────────────
+        fSetVerboseLevelCmd = std::make_unique<G4UIcmdWithAnInteger>(
+            "/voxmgr/setVerboseLevel", this);
+        fSetVerboseLevelCmd->SetGuidance("Set the verbose level for VoxQuantityManager.");
+        fSetVerboseLevelCmd->SetParameterName("VerboseLevel", /*omittable=*/false);
+        fSetVerboseLevelCmd->SetDefaultValue(0);
+        fSetVerboseLevelCmd->AvailableForStates(G4State_PreInit,
+                                                G4State_Idle);
+
+        // ── /voxmgr/setNewSubFolder <string> ─────────────────────────────────
+        fNewSubFolderCmd = std::make_unique<G4UIcmdWithAString>(
+            "/voxmgr/setNewSubFolder", this);
+        fNewSubFolderCmd->SetGuidance("Set a new subfolder for voxel related files.");
+        fNewSubFolderCmd->SetParameterName("subFolder", /*omittable=*/false);
+        fNewSubFolderCmd->SetDefaultValue("");
+        fNewSubFolderCmd->AvailableForStates(G4State_PreInit,
+                                             G4State_Idle);
+
+        // ── /voxmgr/leaveSubFolder ───────────────────────────────────────────
+        fLeaveSubFolderCmd = std::make_unique<G4UIcmdWithoutParameter>(
+            "/voxmgr/leaveSubFolder", this);
+        fLeaveSubFolderCmd->SetGuidance("Leave the current subfolder for voxel related files.");
+        fLeaveSubFolderCmd->AvailableForStates(G4State_PreInit,
+                                               G4State_Idle);
     }
 
     // ── destructor ───────────────────────────────────────────────────────────────
@@ -48,19 +74,40 @@ namespace G4Vox
         if (command == fSetRootPathCmd.get())
         {
             fManager->SetRootPath(newValue);
-            G4cout << "[VoxQuantityMessenger] RootPath set to: "
-                   << newValue << G4endl;
+            if (fManager->GetVerboseLevel() > 0)
+                G4cout << "[VoxQuantityMessenger] RootPath set to: " << newValue << G4endl;
         }
         else if (command == fResetManagerCmd.get())
         {
-            G4cout << "[VoxQuantityMessenger] Calling ResetManager()..." << G4endl;
+            if (fManager->GetVerboseLevel() > 0)
+                G4cout << "[VoxQuantityMessenger] Calling ResetManager()..." << G4endl;
             fManager->ResetManager();
         }
         else if (command == fSetPrefixCmd.get())
         {
             fManager->SetPrefix(newValue);
-            G4cout << "[VoxQuantityMessenger] Prefix set to: "
-                   << newValue << G4endl;
+            if (fManager->GetVerboseLevel() > 0)
+                G4cout << "[VoxQuantityMessenger] Prefix set to: " << newValue << G4endl;
+        }
+        else if (command == fSetVerboseLevelCmd.get())
+        {
+            G4int level = G4UIcmdWithAnInteger::GetNewIntValue(newValue);
+            fManager->SetVerboseLevel(level);
+            G4cout << "[VoxQuantityMessenger] VerboseLevel set to: " << level << G4endl;
+        }
+        else if (command == fNewSubFolderCmd.get())
+        {
+            fManager->SetSubFolder(newValue);
+            if (fManager->GetVerboseLevel() > 0)
+                G4cout << "[VoxQuantityMessenger] New subfolder set. Full root path is now: "
+                       << fManager->GetFullRootPath() << G4endl;
+        }
+        else if (command == fLeaveSubFolderCmd.get())
+        {
+            fManager->SetSubFolder("");
+            if (fManager->GetVerboseLevel() > 0)
+                G4cout << "[VoxQuantityMessenger] Left subfolder. Full root path is now: "
+                       << fManager->GetFullRootPath() << G4endl;
         }
         else
         {

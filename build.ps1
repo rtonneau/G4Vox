@@ -57,29 +57,56 @@ if ($Clean -and (Test-Path $BuildDir)) {
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 Set-Location $BuildDir
 
-# ── Configure ─────────────────────────────────────────────────
-Write-Host "`n[1/3] Configuring..." -ForegroundColor Cyan
-cmake .. `
-    -G "Visual Studio 18 2026" `
-    -A x64 `
-    -DGeant4_DIR="$Geant4Dir" `
-    -DCMAKE_INSTALL_PREFIX="$InstallPrefix" `
-    -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+try {
+    # ── Configure ─────────────────────────────────────────────────
+    function Invoke-Configure {
+        cmake .. `
+            -G "Visual Studio 18 2026" `
+            -A x64 `
+            -DGeant4_DIR="$Geant4Dir" `
+            -DCMAKE_INSTALL_PREFIX="$InstallPrefix" `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+    }
+    Write-Host "`n[1/3] Configuring..." -ForegroundColor Cyan
+    Invoke-Configure
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "`nConfigure failed. This may be due to a CMake cache mismatch." -ForegroundColor Yellow
+        $answer = Read-Host "Wipe CMakeCache.txt + CMakeFiles and retry? [y/N]"
 
-if ($LASTEXITCODE -ne 0) { Write-Error "Configure failed"; exit 1 }
+        if ($answer -match '^[Yy]$') {
+            Write-Host "Wiping cache..." -ForegroundColor Yellow
+            Remove-Item -Force -ErrorAction SilentlyContinue "$BuildDir\CMakeCache.txt"
+            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$BuildDir\CMakeFiles"
 
-# ── Build ──────────────────────────────────────────────────────
-Write-Host "`n[2/3] Building..." -ForegroundColor Cyan
-cmake --build . --config $Config --parallel
+            Invoke-Configure
 
-if ($LASTEXITCODE -ne 0) { Write-Error "Build failed"; exit 1 }
+            if ($LASTEXITCODE -ne 0) { throw "Configure failed even after cache wipe" }
+        }
+        else {
+            throw "Configure failed — cache wipe declined by user"
+        }
+    }
 
-# ── Install ────────────────────────────────────────────────────
-Write-Host "`n[3/3] Installing..." -ForegroundColor Cyan
-cmake --install . --config $Config
 
-if ($LASTEXITCODE -ne 0) { Write-Error "Install failed"; exit 1 }
+    # ── Build ──────────────────────────────────────────────────────
+    Write-Host "`n[2/3] Building..." -ForegroundColor Cyan
+    cmake --build . --config $Config --parallel
 
-Write-Host "`nDone! Installed to: $InstallPrefix" -ForegroundColor Green
+    if ($LASTEXITCODE -ne 0) { throw "Build failed" }
 
-Set-Location $PSScriptRoot
+    # ── Install ────────────────────────────────────────────────────
+    Write-Host "`n[3/3] Installing..." -ForegroundColor Cyan
+    cmake --install . --config $Config
+
+    if ($LASTEXITCODE -ne 0) { throw "Install failed" }
+
+    Write-Host "`nDone! Installed to: $InstallPrefix" -ForegroundColor Green
+}
+catch {
+    Write-Error $_.Exception.Message
+    exit 1
+}
+finally {
+    # Always runs — success OR failure
+    Set-Location $PSScriptRoot
+}
