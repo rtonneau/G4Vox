@@ -1,6 +1,7 @@
 #include "G4Vox/VoxQuantityMessenger.hh"
 #include "G4Vox/VoxQuantityManager.hh"
 #include "G4Vox/VoxUtils.hh"
+#include "G4Vox/TOMLManager.hh"
 
 #include "G4UImanager.hh"
 
@@ -74,6 +75,8 @@ namespace G4Vox
         if (command == fSetRootPathCmd.get())
         {
             fManager->SetRootPath(newValue);
+            auto *toml = TOMLManager::GetInstance();
+            toml->SetRootPath(fManager->GetRootPath());
             if (fManager->GetVerboseLevel() > 0)
                 G4cout << "[VoxQuantityMessenger] RootPath set to: " << newValue << G4endl;
         }
