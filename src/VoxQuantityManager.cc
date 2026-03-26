@@ -6,6 +6,7 @@
 #include "G4Vox/VoxUtils.hh"
 #include "G4Vox/TOMLManager.hh"
 #include "G4Vox/VoxQuantityMessenger.hh"
+#include "G4Vox/HDF5Writer.hh"
 
 #include "G4AccumulableManager.hh"
 
@@ -143,6 +144,28 @@ namespace G4Vox
             G4String file_path = this->GetFullPathForNewFile() + regionName + this->GetPostfix() + ".vti";
             it->second->ExportToVTI(file_path);
         }
+    }
+
+    void VoxQuantityManager::DumpRunToHDF5(G4int runId, int64_t primaries, double runtimeSec)
+    {
+#ifdef G4ANALYSIS_USE_HDF5
+        for (const auto &regionName : this->fOrderedRegions)
+        {
+            auto it = this->fRegions.find(regionName);
+            if (it == this->fRegions.end())
+                continue;
+            G4String file_path = this->GetFullPathForNewFile() + regionName + ".hdf5";
+            // w is created, used, and destroyed within this scope
+            {
+                HDF5Writer writer(file_path, HDF5Writer::Mode::Extendable4D); // TRUNC or RDWR auto-detected
+                writer.Init(*it->second);
+                writer.Export(runId, primaries, runtimeSec, *it->second);
+            } // ← destructor called here, file properly closed
+        }
+#else
+        G4Exception("VoxQuantityManager::DumpRunToHDF5", "G4Vox001",
+                    FatalException, "Geant4 was built without HDF5 support");
+#endif
     }
 
     void VoxQuantityManager::ReadAccumulables()

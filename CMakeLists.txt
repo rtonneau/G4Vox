@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
+
 # ── Project declaration ───────────────────────────────────────────────────────
 # VERSION is important: find_package(G4Vox 1.0 REQUIRED) will check it
 project(G4Vox
@@ -10,6 +11,7 @@ project(G4Vox
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ── Generate version header ───────────────────────────────────────────────────
 configure_file(
@@ -21,7 +23,14 @@ configure_file(
 find_package(Geant4 REQUIRED)
 #Look for toml++ library (installed by vcpkg)
 find_package(tomlplusplus CONFIG REQUIRED)
+find_package(HDF5 REQUIRED COMPONENTS C CXX) # <-- must request CXX
 
+# Debug: print what was found
+message(STATUS "HDF5 version     : ${HDF5_VERSION}")
+message(STATUS "HDF5 includes    : ${HDF5_INCLUDE_DIRS}")
+message(STATUS "HDF5 C libs      : ${HDF5_C_LIBRARIES}")
+message(STATUS "HDF5 CXX libs    : ${HDF5_CXX_LIBRARIES}") # Must not be empty!
+message(STATUS "HDF5 definitions : ${HDF5_DEFINITIONS}")
 
 # ── Collect sources ───────────────────────────────────────────────────────────
 file(GLOB G4Vox_SOURCES
@@ -37,6 +46,13 @@ add_library(G4Vox STATIC ${G4Vox_SOURCES})
 # This makes  target_link_libraries(myApp G4Vox::G4Vox)  work
 # even when building G4Vox as a subdirectory (add_subdirectory use case).
 add_library(G4Vox::G4Vox ALIAS G4Vox)
+
+if(Geant4_hdf5_FOUND)
+    target_compile_definitions(G4Vox PRIVATE G4ANALYSIS_USE_HDF5)
+    message(STATUS ">>> HDF5 support enabled for G4Vox")
+else()
+    message(STATUS ">>> HDF5 support NOT available for G4Vox")
+endif()
 
 # ── Include directories ───────────────────────────────────────────────────────
 # BUILD_INTERFACE  → path used when compiling G4Vox itself and
@@ -61,9 +77,11 @@ target_link_libraries(G4Vox
     ${Geant4_LIBRARIES}
     PUBLIC
     tomlplusplus::tomlplusplus
+    PUBLIC
+    hdf5::hdf5-shared
+    hdf5::hdf5_cpp-shared
 )
 
-# Also propagate Geant4 include dirs to consumers
 target_include_directories(G4Vox
     PUBLIC
     ${Geant4_INCLUDE_DIRS} # Geant4 headers

@@ -1,0 +1,55 @@
+Date : 2026-03-26 16:05:51
+Directory : c:\DEV\GEANT4\LIB\G4Vox
+Total : 23 files,  2323 codes, 364 comments, 504 blanks, all 3191 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| C++        |         19 |      2,039 |        274 |        413 |      2,726 |
+| Markdown   |          1 |        117 |          0 |         47 |        164 |
+| CMake      |          1 |         88 |         48 |         23 |        159 |
+| PowerShell |          1 |         57 |         42 |         15 |        114 |
+| YAML       |          1 |         22 |          0 |          6 |         28 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                             | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                |         23 |      2,323 |        364 |        504 |      3,191 |
+| . (Files)                                                        |          4 |        284 |         90 |         91 |        465 |
+| include                                                          |         10 |        630 |         92 |        170 |        892 |
+| include\G4Vox                                                    |         10 |        630 |         92 |        170 |        892 |
+| src                                                              |          9 |      1,409 |        182 |        243 |      1,834 |
++------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                         | language   | code       | comment    | blank      | total      |
++------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\DEV\GEANT4\LIB\G4Vox\CITATION.cff                             | YAML       |         22 |          0 |          6 |         28 |
+| c:\DEV\GEANT4\LIB\G4Vox\CMakeLists.txt                           | CMake      |         88 |         48 |         23 |        159 |
+| c:\DEV\GEANT4\LIB\G4Vox\ReadMe.md                                | Markdown   |        117 |          0 |         47 |        164 |
+| c:\DEV\GEANT4\LIB\G4Vox\build.ps1                                | PowerShell |         57 |         42 |         15 |        114 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\HDF5Writer.hh              | C++        |         83 |         15 |         23 |        121 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\TOMLManager.hh             | C++        |         35 |          8 |         13 |         56 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\VVoxQuantity.hh            | C++        |         71 |         19 |         23 |        113 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\VVoxQuantityAccumulable.hh | C++        |         63 |         11 |         17 |         91 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\VVoxQuantityScorer.hh      | C++        |         60 |          5 |         15 |         80 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\VoxGeometry.hh             | C++        |         82 |          9 |         20 |        111 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\VoxQuantityManager.hh      | C++        |         71 |          8 |         22 |        101 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\VoxQuantityMessenger.hh    | C++        |         26 |          8 |          6 |         40 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\VoxSD.hh                   | C++        |         59 |          1 |         11 |         71 |
+| c:\DEV\GEANT4\LIB\G4Vox\include\G4Vox\VoxUtils.hh                | C++        |         80 |          8 |         20 |        108 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\HDF5Writer.cc                        | C++        |        360 |         57 |         73 |        490 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\TOMLManager.cc                       | C++        |         80 |         23 |         20 |        123 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\VVoxQuantity.cc                      | C++        |         90 |          4 |         14 |        108 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\VVoxQuantityScorer.cc                | C++        |         43 |          0 |         10 |         53 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\VoxGeometry.cc                       | C++        |        177 |         18 |         28 |        223 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\VoxQuantityManager.cc                | C++        |        343 |          6 |         50 |        399 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\VoxQuantityMessenger.cc              | C++        |        103 |         11 |          9 |        123 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\VoxSD.cc                             | C++        |        123 |          6 |         19 |        148 |
+| c:\DEV\GEANT4\LIB\G4Vox\src\VoxUtils.cc                          | C++        |         90 |         57 |         20 |        167 |
+| Total                                                            |            |      2,323 |        364 |        504 |      3,191 |
++------------------------------------------------------------------+------------+------------+------------+------------+------------+

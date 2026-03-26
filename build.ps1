@@ -65,7 +65,8 @@ try {
             -A x64 `
             -DGeant4_DIR="$Geant4Dir" `
             -DCMAKE_INSTALL_PREFIX="$InstallPrefix" `
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -Wno-dev
     }
     Write-Host "`n[1/3] Configuring..." -ForegroundColor Cyan
     Invoke-Configure

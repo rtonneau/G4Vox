@@ -48,6 +48,7 @@ namespace G4Vox
     void StoreAll();
     void StoreAllVTI();
     void ReadAccumulables();
+    void DumpRunToHDF5(G4int runId, int64_t primaries, double runtimeSec);
 
     VoxRegion *GetRegion(const G4String &regionName) const;
     VVoxQuantity *GetQuantity(const G4String &regionName,
