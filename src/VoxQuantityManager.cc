@@ -154,7 +154,7 @@ namespace G4Vox
             auto it = this->fRegions.find(regionName);
             if (it == this->fRegions.end())
                 continue;
-            G4String file_path = this->GetFullPathForNewFile() + regionName + ".hdf5";
+            G4String file_path = this->GetFullPathForNewFile() + regionName + ".h5";
             // w is created, used, and destroyed within this scope
             {
                 HDF5Writer writer(file_path, HDF5Writer::Mode::Extendable4D); // TRUNC or RDWR auto-detected
