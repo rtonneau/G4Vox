@@ -160,4 +160,19 @@ target_link_libraries(your_target PRIVATE G4Vox::G4Vox)
 > Replace `C:/DEV/GEANT4/LIB/G4Vox-install` with your actual G4Vox install prefix if different.
 > `G4_ROOT` should point to your Geant4 install root, e.g. `C:/DEV/GEANT4/geant4-v11.3.2-install`.
 
+#### 5.3 — Include G4Vox headers in your code
+
+Use the umbrella header to access all built-in quantities:
+
+```cpp
+#include "G4Vox/Quantities.hh"
+```
+
+Or include only what you need:
+
+```cpp
+#include "G4Vox/Quantities/QuantityDose.hh"
+#include "G4Vox/Quantities/QuantityLET.hh"
+```
+
 ---

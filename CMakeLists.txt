@@ -33,7 +33,7 @@ message(STATUS "HDF5 CXX libs    : ${HDF5_CXX_LIBRARIES}") # Must not be empty!
 message(STATUS "HDF5 definitions : ${HDF5_DEFINITIONS}")
 
 # ── Collect sources ───────────────────────────────────────────────────────────
-file(GLOB G4Vox_SOURCES
+file(GLOB_RECURSE G4Vox_SOURCES CONFIGURE_DEPENDS
     src/*.cc
 )
 
