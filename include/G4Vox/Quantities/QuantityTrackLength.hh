@@ -4,37 +4,46 @@
 #include "G4Vox/VVoxQuantity.hh"
 #include "G4Vox/VVoxQuantityAccumulable.hh"
 
-class QuantityTrackLength;
-
-class AccumulableTrackLength : public G4Vox::VVoxQuantityAccumulable
+namespace G4Vox
 {
-    friend class QuantityTrackLength; // for data access
+    namespace Quantities
+    {
 
-public:
-    // Inherit constructor from base class
-    using G4Vox::VVoxQuantityAccumulable::VVoxQuantityAccumulable;
+        class QuantityTrackLength;
 
-    void Score(const G4Step *step) override;
+        class AccumulableTrackLength : public VVoxQuantityAccumulable
+        {
+            friend class QuantityTrackLength; // for data access
 
-    size_t FlattenVoxelIndex(const G4Vox::VoxelIndex &v) const override;
+        public:
+            // Inherit constructor from base class
+            using VVoxQuantityAccumulable::VVoxQuantityAccumulable;
 
-    void Merge(const G4VAccumulable &other) override;
+            void Score(const G4Step *step) override;
 
-private:
-    G4Vox::array_type fTotLength; // Total track length in the voxel, used for track length calculation
-};
+            size_t FlattenVoxelIndex(const VoxelIndex &v) const override;
 
-class QuantityTrackLength : public G4Vox::VVoxQuantity
-{
-public:
-    QuantityTrackLength() : VVoxQuantity("TrackLength") {}
+            void Merge(const G4VAccumulable &other) override;
 
-    G4Vox::VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
+        private:
+            array_type fTotLength; // Total track length in the voxel, used for track length calculation
+        };
 
-    void ReadAccumulable(const G4Vox::VVoxQuantityAccumulable &other) override;
+        class QuantityTrackLength : public VVoxQuantity
+        {
+        public:
+            QuantityTrackLength() : VVoxQuantity("TrackLength") {}
 
-    void Compute() override;
+            VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
 
-    void Store(G4String path = ".") override;
-};
+            void ReadAccumulable(const VVoxQuantityAccumulable &other) override;
+
+            void Compute() override;
+
+            void Store(G4String path = ".") override;
+        };
+
+    } // namespace Quantities
+} // namespace G4Vox
+
 #endif

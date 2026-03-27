@@ -175,4 +175,11 @@ Or include only what you need:
 #include "G4Vox/Quantities/QuantityLET.hh"
 ```
 
+Built-in concrete quantities are in the `G4Vox::Quantities` namespace, for example:
+
+```cpp
+G4Vox::Quantities::QuantityDose dose;
+G4Vox::Quantities::QuantityLET let;
+```
+
 ---

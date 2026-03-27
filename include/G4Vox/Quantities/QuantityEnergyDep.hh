@@ -4,28 +4,37 @@
 #include "G4Vox/VVoxQuantity.hh"
 #include "G4Vox/VVoxQuantityAccumulable.hh"
 
-class AccumulableEnergyDep : public G4Vox::VVoxQuantityAccumulable
+namespace G4Vox
 {
-    friend class QuantityEnergyDep; // for data access
-public:
-    // Inherit constructor from base class
-    using G4Vox::VVoxQuantityAccumulable::VVoxQuantityAccumulable;
+    namespace Quantities
+    {
 
-    void Score(const G4Step *step) override;
+        class AccumulableEnergyDep : public VVoxQuantityAccumulable
+        {
+            friend class QuantityEnergyDep; // for data access
+        public:
+            // Inherit constructor from base class
+            using VVoxQuantityAccumulable::VVoxQuantityAccumulable;
 
-    size_t FlattenVoxelIndex(const G4Vox::VoxelIndex &v) const override;
-};
+            void Score(const G4Step *step) override;
 
-class QuantityEnergyDep : public G4Vox::VVoxQuantity
-{
-public:
-    QuantityEnergyDep() : VVoxQuantity("Edep") {}
+            size_t FlattenVoxelIndex(const VoxelIndex &v) const override;
+        };
 
-    G4Vox::VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
+        class QuantityEnergyDep : public VVoxQuantity
+        {
+        public:
+            QuantityEnergyDep() : VVoxQuantity("Edep") {}
 
-    void Compute() override;
-    void ReadAccumulable(const G4Vox::VVoxQuantityAccumulable &other) override;
+            VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
 
-    void Store(G4String path = ".") override;
-};
+            void Compute() override;
+            void ReadAccumulable(const VVoxQuantityAccumulable &other) override;
+
+            void Store(G4String path = ".") override;
+        };
+
+    } // namespace Quantities
+} // namespace G4Vox
+
 #endif

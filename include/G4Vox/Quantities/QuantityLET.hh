@@ -4,39 +4,48 @@
 #include "G4Vox/VVoxQuantity.hh"
 #include "G4Vox/VVoxQuantityAccumulable.hh"
 
-class QuantityLET;
-
-class AccumulableLET : public G4Vox::VVoxQuantityAccumulable
+namespace G4Vox
 {
-    friend class QuantityLET; // for data access
+    namespace Quantities
+    {
 
-public:
-    // Inherit constructor from base class
-    using G4Vox::VVoxQuantityAccumulable::VVoxQuantityAccumulable;
+        class QuantityLET;
 
-    void Score(const G4Step *step) override;
+        class AccumulableLET : public VVoxQuantityAccumulable
+        {
+            friend class QuantityLET; // for data access
 
-    size_t FlattenVoxelIndex(const G4Vox::VoxelIndex &v) const override;
+        public:
+            // Inherit constructor from base class
+            using VVoxQuantityAccumulable::VVoxQuantityAccumulable;
 
-    void Initialize() override;
+            void Score(const G4Step *step) override;
 
-    void Merge(const G4VAccumulable &other) override;
+            size_t FlattenVoxelIndex(const VoxelIndex &v) const override;
 
-private:
-    G4Vox::array_type fTotLength; // Total track length in the voxel, used for LET calculation
-};
+            void Initialize() override;
 
-class QuantityLET : public G4Vox::VVoxQuantity
-{
-public:
-    QuantityLET() : VVoxQuantity("LET") {}
+            void Merge(const G4VAccumulable &other) override;
 
-    G4Vox::VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
+        private:
+            array_type fTotLength; // Total track length in the voxel, used for LET calculation
+        };
 
-    void ReadAccumulable(const G4Vox::VVoxQuantityAccumulable &other) override;
+        class QuantityLET : public VVoxQuantity
+        {
+        public:
+            QuantityLET() : VVoxQuantity("LET") {}
 
-    void Compute() override;
+            VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
 
-    void Store(G4String path = ".") override;
-};
+            void ReadAccumulable(const VVoxQuantityAccumulable &other) override;
+
+            void Compute() override;
+
+            void Store(G4String path = ".") override;
+        };
+
+    } // namespace Quantities
+} // namespace G4Vox
+
 #endif
