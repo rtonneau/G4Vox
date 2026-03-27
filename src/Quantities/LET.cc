@@ -24,7 +24,7 @@ namespace G4Vox
             this->fTotLength = array_type(0.0, this->TotalVoxels());
         }
 
-        void AccumulableLET::Score(const G4Step *aStep)
+        void AccumulableLET::ScoreImpl(const G4Step *aStep)
         {
             // ALL electrons contribute — no primary/secondary distinction
             auto *track = aStep->GetTrack();

@@ -11,7 +11,7 @@ namespace G4Vox
     namespace Quantities
     {
 
-        void AccumulableNumDelta::Score(const G4Step *aStep)
+        void AccumulableNumDelta::ScoreImpl(const G4Step *aStep)
         {
             // Get secondaries produced in this step
             const std::vector<const G4Track *> *secondaries =

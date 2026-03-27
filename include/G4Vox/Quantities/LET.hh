@@ -19,7 +19,7 @@ namespace G4Vox
             // Inherit constructor from base class
             using VVoxQuantityAccumulable::VVoxQuantityAccumulable;
 
-            void Score(const G4Step *step) override;
+            void ScoreImpl(const G4Step *step) override;
 
             size_t FlattenVoxelIndex(const VoxelIndex &v) const override;
 
@@ -34,7 +34,7 @@ namespace G4Vox
         class LET : public VVoxQuantity
         {
         public:
-            LET() : VVoxQuantity("LET") {}
+            LET(G4String name = "LET") : VVoxQuantity(name) {}
 
             VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
 

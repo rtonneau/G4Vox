@@ -17,7 +17,7 @@ namespace G4Vox
             this->fData += o.fData; // Merge track lengths
         }
 
-        void AccumulableTrackLength::Score(const G4Step *aStep)
+        void AccumulableTrackLength::ScoreImpl(const G4Step *aStep)
         {
             // ALL electrons contribute — no primary/secondary distinction
             auto *track = aStep->GetTrack();

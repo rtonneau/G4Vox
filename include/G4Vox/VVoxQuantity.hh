@@ -5,7 +5,10 @@
 #include "G4Step.hh"
 
 #include "G4Vox/VoxGeometry.hh"
+#include "G4Vox/VoxStepFilter.hh"
 #include "G4Vox/VoxUtils.hh"
+
+#include <memory>
 
 class G4UImessenger;
 
@@ -53,6 +56,16 @@ namespace G4Vox
     void SetAccumulate(bool accumulate) { this->fAccumulate = accumulate; }
     bool GetAccumulate() const { return this->fAccumulate; }
     bool IsInitialized() const { return this->fInitialized; }
+    void AddStepFilter(const std::shared_ptr<const VVoxStepFilter> &filter)
+    {
+      if (filter)
+        this->fStepFilters.push_back(filter);
+    }
+    void ClearStepFilters() { this->fStepFilters.clear(); }
+    const std::vector<std::shared_ptr<const VVoxStepFilter>> &GetStepFilters() const
+    {
+      return this->fStepFilters;
+    }
 
     const G4String &GetName() const
     {
@@ -104,6 +117,7 @@ namespace G4Vox
     G4Vox::array_type fData;                      // ← default store, subclass fills it
     const VoxGeometry *fLinkedGeometry = nullptr; // for easy access to geometry info in Compute()
     std::vector<G4String> fStoredFiles;
+    std::vector<std::shared_ptr<const VVoxStepFilter>> fStepFilters;
 
     // Persistent data arrays live in the concrete subclass
     // e.g. std::valarray<G4double> fDose;

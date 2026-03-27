@@ -3,7 +3,11 @@
 
 #include "G4VAccumulable.hh"
 
+#include "G4Vox/VoxStepFilter.hh"
 #include "G4Vox/VoxUtils.hh"
+
+#include <memory>
+#include <vector>
 
 class G4Step;
 
@@ -26,7 +30,32 @@ namespace G4Vox
         //------------------------------------------------------------------
         // Scoring — called from SD on worker thread
         //------------------------------------------------------------------
-        virtual void Score(const G4Step *) = 0;
+        virtual void Score(const G4Step *step)
+        {
+            if (step == nullptr || !this->PassesFilters(step))
+                return;
+            this->ScoreImpl(step);
+        }
+
+        void AddStepFilter(const std::shared_ptr<const VVoxStepFilter> &filter)
+        {
+            if (filter)
+                this->fStepFilters.push_back(filter);
+        }
+
+        void SetStepFilters(const std::vector<std::shared_ptr<const VVoxStepFilter>> &filters)
+        {
+            this->fStepFilters.clear();
+            for (const auto &filter : filters)
+                this->AddStepFilter(filter);
+        }
+
+        void ClearStepFilters() { this->fStepFilters.clear(); }
+
+        const std::vector<std::shared_ptr<const VVoxStepFilter>> &GetStepFilters() const
+        {
+            return this->fStepFilters;
+        }
 
         //------------------------------------------------------------------
         // G4VAccumulable interface
@@ -66,6 +95,18 @@ namespace G4Vox
         virtual G4double GetData(std::size_t i) const { return this->fData[i]; }
 
     protected:
+        virtual void ScoreImpl(const G4Step *) = 0;
+
+        G4bool PassesFilters(const G4Step *step) const
+        {
+            for (const auto &filter : this->fStepFilters)
+            {
+                if (filter && !filter->Accept(step))
+                    return false;
+            }
+            return true;
+        }
+
         virtual void Initialize()
         {
             auto maxVox = this->fMaxVoxIndex.lock();
@@ -85,6 +126,7 @@ namespace G4Vox
         G4int fNz = 0;
         G4int fTotalVoxels = 0;
         std::weak_ptr<const VoxelIndex> fMaxVoxIndex;
+        std::vector<std::shared_ptr<const VVoxStepFilter>> fStepFilters;
     };
 }
 #endif

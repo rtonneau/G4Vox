@@ -9,6 +9,7 @@ namespace G4Vox
     {
         const G4String accName = this->fDetectorName + "/" + this->fName;
         VVoxQuantityAccumulable *acc = this->UserCreateAccumulable(accName);
+        acc->SetStepFilters(this->fStepFilters);
         acc->Initialize(); // Make sure to allocate fData.
         return acc;
     }

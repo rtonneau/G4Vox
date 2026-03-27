@@ -12,7 +12,7 @@ namespace G4Vox
     namespace Quantities
     {
 
-        void AccumulableIonizations::Score(const G4Step *aStep)
+        void AccumulableIonizations::ScoreImpl(const G4Step *aStep)
         {
             G4double edep = aStep->GetTotalEnergyDeposit();
             if (edep > 0.)
