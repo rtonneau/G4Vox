@@ -1,4 +1,4 @@
-#include "G4Vox/Quantities/QuantityTrackLength.hh"
+#include "G4Vox/Quantities/LET.hh"
 
 #include "G4Vox/VoxUtils.hh"
 #include "G4TouchableHandle.hh"
@@ -11,13 +11,20 @@ namespace G4Vox
     namespace Quantities
     {
 
-        void AccumulableTrackLength::Merge(const G4VAccumulable &other)
+        void AccumulableLET::Merge(const G4VAccumulable &other)
         {
-            const auto &o = static_cast<const AccumulableTrackLength &>(other);
-            this->fData += o.fData; // Merge track lengths
+            const auto &o = static_cast<const AccumulableLET &>(other);
+            this->fData += o.fData;           // Merge energy deposits
+            this->fTotLength += o.fTotLength; // Merge track lengths
         }
 
-        void AccumulableTrackLength::Score(const G4Step *aStep)
+        void AccumulableLET::Initialize()
+        {
+            VVoxQuantityAccumulable::Initialize();
+            this->fTotLength = array_type(0.0, this->TotalVoxels());
+        }
+
+        void AccumulableLET::Score(const G4Step *aStep)
         {
             // ALL electrons contribute — no primary/secondary distinction
             auto *track = aStep->GetTrack();
@@ -38,34 +45,40 @@ namespace G4Vox
             std::size_t i = G4Vox::CartesianVoxelIndex::FlattenTouchable(th, fNx, fNy);
             if (i < this->TotalVoxels())
             {
-                this->fData[i] += stepLen; // Accumulate track length in the voxel
+                this->fData[i] += edep * edep / stepLen; // Accumulate energy deposit in the voxel
+                this->fTotLength[i] += stepLen;          // Accumulate track length for LET calculation
             }
         }
 
-        size_t AccumulableTrackLength::FlattenVoxelIndex(const VoxelIndex &v) const
+        size_t AccumulableLET::FlattenVoxelIndex(const VoxelIndex &v) const
         {
             // Compute the flat voxel index from the 3D index
             return v.Flatten(this->fNx, this->fNy);
         }
 
-        VVoxQuantityAccumulable *QuantityTrackLength::UserCreateAccumulable(const G4String &name) const
+        VVoxQuantityAccumulable *QuantityLET::UserCreateAccumulable(const G4String &name) const
         {
-            return new AccumulableTrackLength(name, this->GetMaxVoxIndex()); // pass weak_ptr
+            return new AccumulableLET(name, this->GetMaxVoxIndex()); // pass weak_ptr
         }
 
-        void QuantityTrackLength::ReadAccumulable(const VVoxQuantityAccumulable &other)
+        void QuantityLET::ReadAccumulable(const VVoxQuantityAccumulable &other)
         {
-            const auto &o = static_cast<const AccumulableTrackLength &>(other);
-            this->fData += o.fData; // Merge energy deposits
+            const auto &o = static_cast<const AccumulableLET &>(other);
+            constexpr G4double minStepLen = 1.0 * CLHEP::nm; // tune as needed
+            std::valarray<bool> mask = (o.fTotLength > minStepLen);
+            // std::valarray<bool> mask = (o.fTotLength > 0.);
+            //  where track length > 0, compute LET
+            // this->fData[mask] += (o.fData[mask] / G4::keV) / (o.fTotLength[mask] / G4::micrometer);
+            this->fData[mask] += o.fData[mask]; // Merge energy deposits
         }
 
-        void QuantityTrackLength::Compute()
+        void QuantityLET::Compute()
         {
             // this->fData *= (G4::keV / G4::micrometer); // Convert to keV/um
             this->fComputed = true;
         }
 
-        void QuantityTrackLength::Store(G4String path)
+        void QuantityLET::Store(G4String path)
         {
             // Implement logic to store fData to disk, e.g. as a CSV or binary file
             // This is a placeholder and should be replaced with actual file I/O code
@@ -80,7 +93,7 @@ namespace G4Vox
             if (ofs.is_open())
             {
                 ofs << "x_index" << std::setw(width) << "y_index" << std::setw(width) << "z_index"
-                    << std::setw(width) << "Track Length (mm)" << G4endl;
+                    << std::setw(width) << "LET (keV/um)" << G4endl;
 
                 G4int nX = nVox->x() + 1;
                 G4int nY = nVox->y() + 1;

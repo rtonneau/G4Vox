@@ -1,4 +1,4 @@
-#include "G4Vox/Quantities/QuantityEnergyDep.hh"
+#include "G4Vox/Quantities/NumDelta.hh"
 
 #include "G4Vox/VoxUtils.hh"
 #include "G4TouchableHandle.hh"
@@ -11,42 +11,48 @@ namespace G4Vox
     namespace Quantities
     {
 
-        void AccumulableEnergyDep::Score(const G4Step *aStep)
+        void AccumulableNumDelta::Score(const G4Step *aStep)
         {
-            G4double edep = aStep->GetTotalEnergyDeposit();
-            if (edep > 0.)
-            {
-                // Get pre-step point and its position
+            // Get secondaries produced in this step
+            const std::vector<const G4Track *> *secondaries =
+                aStep->GetSecondaryInCurrentStep();
 
-                // Determine voxel index from position
-                // GetTouchable() gives a raw pointer with no reference counting overhead
-                const G4VTouchable *th = aStep->GetPreStepPoint()->GetTouchable();
-                std::size_t i = G4Vox::CartesianVoxelIndex::FlattenTouchable(th, fNx, fNy);
-                if (i < this->TotalVoxels())
+            if (!secondaries)
+                return;
+
+            const G4VTouchable *th = aStep->GetPreStepPoint()->GetTouchable();
+            std::size_t i = G4Vox::CartesianVoxelIndex::FlattenTouchable(th, fNx, fNy);
+            if (i >= this->TotalVoxels())
+                return;
+
+            for (const G4Track *sec : *secondaries)
+            {
+                // Delta electron = secondary electron (PDG ±11)
+                if (std::abs(sec->GetDefinition()->GetPDGEncoding()) == 11)
                 {
-                    this->fData[i] += edep; // Accumulate energy deposit in the voxel
+                    this->fData[i] += 1.0; // count
                 }
             }
         }
 
-        size_t AccumulableEnergyDep::FlattenVoxelIndex(const VoxelIndex &v) const
+        size_t AccumulableNumDelta::FlattenVoxelIndex(const VoxelIndex &v) const
         {
             // Compute the flat voxel index from the 3D index
             return v.Flatten(this->fNx, this->fNy);
         }
 
-        VVoxQuantityAccumulable *QuantityEnergyDep::UserCreateAccumulable(const G4String &name) const
+        VVoxQuantityAccumulable *QuantityNumDelta::UserCreateAccumulable(const G4String &name) const
         {
-            return new AccumulableEnergyDep(name, this->GetMaxVoxIndex()); // pass weak_ptr
+            return new AccumulableNumDelta(name, this->GetMaxVoxIndex()); // pass weak_ptr
         }
 
-        void QuantityEnergyDep::ReadAccumulable(const VVoxQuantityAccumulable &other)
+        void QuantityNumDelta::ReadAccumulable(const VVoxQuantityAccumulable &other)
         {
-            const auto &o = static_cast<const AccumulableEnergyDep &>(other);
-            this->fData += o.fData; /// G4::keV; // Merge energy deposits
+            const auto &o = static_cast<const AccumulableNumDelta &>(other);
+            this->fData += o.fData; // Merge number of delta electrons
         }
 
-        void QuantityEnergyDep::Compute()
+        void QuantityNumDelta::Compute()
         {
             // convert to keV
             // this->fData /= G4::keV;
@@ -55,7 +61,7 @@ namespace G4Vox
             this->fComputed = true;
         }
 
-        void QuantityEnergyDep::Store(G4String path)
+        void QuantityNumDelta::Store(G4String path)
         {
             // Implement logic to store fData to disk, e.g. as a CSV or binary file
             // This is a placeholder and should be replaced with actual file I/O code
@@ -70,7 +76,7 @@ namespace G4Vox
             if (ofs.is_open())
             {
                 ofs << "x_index" << std::setw(width) << "y_index" << std::setw(width) << "z_index"
-                    << std::setw(width) << "EnergyDep (keV)" << G4endl;
+                    << std::setw(width) << "NumDeltaElectrons" << G4endl;
 
                 G4int nX = nVox->x() + 1;
                 G4int nY = nVox->y() + 1;

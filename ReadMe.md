@@ -171,15 +171,17 @@ Use the umbrella header to access all built-in quantities:
 Or include only what you need:
 
 ```cpp
-#include "G4Vox/Quantities/QuantityDose.hh"
-#include "G4Vox/Quantities/QuantityLET.hh"
+#include "G4Vox/Quantities/Dose.hh"
+#include "G4Vox/Quantities/LET.hh"
 ```
 
 Built-in concrete quantities are in the `G4Vox::Quantities` namespace, for example:
 
 ```cpp
-G4Vox::Quantities::QuantityDose dose;
-G4Vox::Quantities::QuantityLET let;
+auto voxManager = G4Vox::VoxQuantityManager::GetInstance();
+voxManager->RegisterRegion("VoxelRegion", G4Vox::VoxGeometry geo);
+oxManager->Register("VoxelRegion", std::make_unique<G4Vox::Quantities::EnergyDep>());
+oxManager->Register("VoxelRegion", std::make_unique<G4Vox::Quantities::Dose>());
 ```
 
 ---

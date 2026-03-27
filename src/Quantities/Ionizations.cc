@@ -1,8 +1,9 @@
-#include "G4Vox/Quantities/QuantityDose.hh"
+#include "G4Vox/Quantities/Ionizations.hh"
 
 #include "G4Vox/VoxUtils.hh"
 #include "G4TouchableHandle.hh"
 #include "G4Step.hh"
+#include "G4VProcess.hh"
 
 #define width 15L
 
@@ -11,49 +12,56 @@ namespace G4Vox
     namespace Quantities
     {
 
-        void AccumulableDose::Score(const G4Step *aStep)
+        void AccumulableIonizations::Score(const G4Step *aStep)
         {
             G4double edep = aStep->GetTotalEnergyDeposit();
             if (edep > 0.)
             {
-                // Get pre-step point and its position
-
-                // Determine voxel index from position
-                // GetTouchable() gives a raw pointer with no reference counting overhead
                 const G4VTouchable *th = aStep->GetPreStepPoint()->GetTouchable();
                 std::size_t i = G4Vox::CartesianVoxelIndex::FlattenTouchable(th, fNx, fNy);
                 if (i < this->TotalVoxels())
                 {
-                    this->fData[i] += edep; // Accumulate energy deposit in the voxel
+                    // ── Ionisation counting ──────────────────────────────────────
+                    const G4VProcess *proc =
+                        aStep->GetPostStepPoint()->GetProcessDefinedStep();
+
+                    if (proc != nullptr)
+                    {
+                        const G4String &name = proc->GetProcessName();
+                        if (name.find("Ioni") != std::string::npos)
+                        {
+                            this->fData[i]++;
+                        }
+                    }
                 }
             }
         }
 
-        size_t AccumulableDose::FlattenVoxelIndex(const VoxelIndex &v) const
+        size_t AccumulableIonizations::FlattenVoxelIndex(const VoxelIndex &v) const
         {
             // Compute the flat voxel index from the 3D index
             return v.Flatten(this->fNx, this->fNy);
         }
 
-        VVoxQuantityAccumulable *QuantityDose::UserCreateAccumulable(const G4String &name) const
+        VVoxQuantityAccumulable *QuantityIonizations::UserCreateAccumulable(const G4String &name) const
         {
-            return new AccumulableDose(name, this->GetMaxVoxIndex()); // pass weak_ptr
+            return new AccumulableIonizations(name, this->GetMaxVoxIndex()); // pass weak_ptr
         }
 
-        void QuantityDose::ReadAccumulable(const VVoxQuantityAccumulable &other)
+        void QuantityIonizations::ReadAccumulable(const VVoxQuantityAccumulable &other)
         {
-            const auto &o = static_cast<const AccumulableDose &>(other);
+            const auto &o = static_cast<const AccumulableIonizations &>(other);
             this->fData += (o.fData / this->GetGeometry()->GetVoxMass()) / G4::milligray; // Merge energy deposits
         }
 
-        void QuantityDose::Compute()
+        void QuantityIonizations::Compute()
         {
             // this->fData /= this->GetGeometry()->GetVoxMass() * G4::milligray; // Convert energy deposit to dose (Gy)
             //  For dose, no post-processing is needed after merging
             this->fComputed = true;
         }
 
-        void QuantityDose::Store(G4String path)
+        void QuantityIonizations::Store(G4String path)
         {
             // Implement logic to store fData to disk, e.g. as a CSV or binary file
             // This is a placeholder and should be replaced with actual file I/O code
