@@ -56,12 +56,12 @@ namespace G4Vox
             return v.Flatten(this->fNx, this->fNy);
         }
 
-        VVoxQuantityAccumulable *QuantityLET::UserCreateAccumulable(const G4String &name) const
+        VVoxQuantityAccumulable *LET::UserCreateAccumulable(const G4String &name) const
         {
             return new AccumulableLET(name, this->GetMaxVoxIndex()); // pass weak_ptr
         }
 
-        void QuantityLET::ReadAccumulable(const VVoxQuantityAccumulable &other)
+        void LET::ReadAccumulable(const VVoxQuantityAccumulable &other)
         {
             const auto &o = static_cast<const AccumulableLET &>(other);
             constexpr G4double minStepLen = 1.0 * CLHEP::nm; // tune as needed
@@ -72,13 +72,13 @@ namespace G4Vox
             this->fData[mask] += o.fData[mask]; // Merge energy deposits
         }
 
-        void QuantityLET::Compute()
+        void LET::Compute()
         {
             // this->fData *= (G4::keV / G4::micrometer); // Convert to keV/um
             this->fComputed = true;
         }
 
-        void QuantityLET::Store(G4String path)
+        void LET::Store(G4String path)
         {
             // Implement logic to store fData to disk, e.g. as a CSV or binary file
             // This is a placeholder and should be replaced with actual file I/O code

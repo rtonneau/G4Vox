@@ -35,18 +35,18 @@ namespace G4Vox
             return v.Flatten(this->fNx, this->fNy);
         }
 
-        VVoxQuantityAccumulable *QuantityEnergyDep::UserCreateAccumulable(const G4String &name) const
+        VVoxQuantityAccumulable *EnergyDep::UserCreateAccumulable(const G4String &name) const
         {
             return new AccumulableEnergyDep(name, this->GetMaxVoxIndex()); // pass weak_ptr
         }
 
-        void QuantityEnergyDep::ReadAccumulable(const VVoxQuantityAccumulable &other)
+        void EnergyDep::ReadAccumulable(const VVoxQuantityAccumulable &other)
         {
             const auto &o = static_cast<const AccumulableEnergyDep &>(other);
             this->fData += o.fData; /// G4::keV; // Merge energy deposits
         }
 
-        void QuantityEnergyDep::Compute()
+        void EnergyDep::Compute()
         {
             // convert to keV
             // this->fData /= G4::keV;
@@ -55,7 +55,7 @@ namespace G4Vox
             this->fComputed = true;
         }
 
-        void QuantityEnergyDep::Store(G4String path)
+        void EnergyDep::Store(G4String path)
         {
             // Implement logic to store fData to disk, e.g. as a CSV or binary file
             // This is a placeholder and should be replaced with actual file I/O code

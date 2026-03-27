@@ -9,11 +9,11 @@ namespace G4Vox
     namespace Quantities
     {
 
-        class QuantityLET;
+        class LET;
 
         class AccumulableLET : public VVoxQuantityAccumulable
         {
-            friend class QuantityLET; // for data access
+            friend class LET; // for data access
 
         public:
             // Inherit constructor from base class
@@ -31,10 +31,10 @@ namespace G4Vox
             array_type fTotLength; // Total track length in the voxel, used for LET calculation
         };
 
-        class QuantityLET : public VVoxQuantity
+        class LET : public VVoxQuantity
         {
         public:
-            QuantityLET() : VVoxQuantity("LET") {}
+            LET() : VVoxQuantity("LET") {}
 
             VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
 

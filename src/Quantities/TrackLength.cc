@@ -48,24 +48,24 @@ namespace G4Vox
             return v.Flatten(this->fNx, this->fNy);
         }
 
-        VVoxQuantityAccumulable *QuantityTrackLength::UserCreateAccumulable(const G4String &name) const
+        VVoxQuantityAccumulable *TrackLength::UserCreateAccumulable(const G4String &name) const
         {
             return new AccumulableTrackLength(name, this->GetMaxVoxIndex()); // pass weak_ptr
         }
 
-        void QuantityTrackLength::ReadAccumulable(const VVoxQuantityAccumulable &other)
+        void TrackLength::ReadAccumulable(const VVoxQuantityAccumulable &other)
         {
             const auto &o = static_cast<const AccumulableTrackLength &>(other);
             this->fData += o.fData; // Merge energy deposits
         }
 
-        void QuantityTrackLength::Compute()
+        void TrackLength::Compute()
         {
             // this->fData *= (G4::keV / G4::micrometer); // Convert to keV/um
             this->fComputed = true;
         }
 
-        void QuantityTrackLength::Store(G4String path)
+        void TrackLength::Store(G4String path)
         {
             // Implement logic to store fData to disk, e.g. as a CSV or binary file
             // This is a placeholder and should be replaced with actual file I/O code

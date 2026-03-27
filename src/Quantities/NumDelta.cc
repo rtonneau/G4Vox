@@ -41,18 +41,18 @@ namespace G4Vox
             return v.Flatten(this->fNx, this->fNy);
         }
 
-        VVoxQuantityAccumulable *QuantityNumDelta::UserCreateAccumulable(const G4String &name) const
+        VVoxQuantityAccumulable *NumDelta::UserCreateAccumulable(const G4String &name) const
         {
             return new AccumulableNumDelta(name, this->GetMaxVoxIndex()); // pass weak_ptr
         }
 
-        void QuantityNumDelta::ReadAccumulable(const VVoxQuantityAccumulable &other)
+        void NumDelta::ReadAccumulable(const VVoxQuantityAccumulable &other)
         {
             const auto &o = static_cast<const AccumulableNumDelta &>(other);
             this->fData += o.fData; // Merge number of delta electrons
         }
 
-        void QuantityNumDelta::Compute()
+        void NumDelta::Compute()
         {
             // convert to keV
             // this->fData /= G4::keV;
@@ -61,7 +61,7 @@ namespace G4Vox
             this->fComputed = true;
         }
 
-        void QuantityNumDelta::Store(G4String path)
+        void NumDelta::Store(G4String path)
         {
             // Implement logic to store fData to disk, e.g. as a CSV or binary file
             // This is a placeholder and should be replaced with actual file I/O code

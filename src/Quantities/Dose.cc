@@ -35,25 +35,25 @@ namespace G4Vox
             return v.Flatten(this->fNx, this->fNy);
         }
 
-        VVoxQuantityAccumulable *QuantityDose::UserCreateAccumulable(const G4String &name) const
+        VVoxQuantityAccumulable *Dose::UserCreateAccumulable(const G4String &name) const
         {
             return new AccumulableDose(name, this->GetMaxVoxIndex()); // pass weak_ptr
         }
 
-        void QuantityDose::ReadAccumulable(const VVoxQuantityAccumulable &other)
+        void Dose::ReadAccumulable(const VVoxQuantityAccumulable &other)
         {
             const auto &o = static_cast<const AccumulableDose &>(other);
             this->fData += (o.fData / this->GetGeometry()->GetVoxMass()) / G4::milligray; // Merge energy deposits
         }
 
-        void QuantityDose::Compute()
+        void Dose::Compute()
         {
             // this->fData /= this->GetGeometry()->GetVoxMass() * G4::milligray; // Convert energy deposit to dose (Gy)
             //  For dose, no post-processing is needed after merging
             this->fComputed = true;
         }
 
-        void QuantityDose::Store(G4String path)
+        void Dose::Store(G4String path)
         {
             // Implement logic to store fData to disk, e.g. as a CSV or binary file
             // This is a placeholder and should be replaced with actual file I/O code

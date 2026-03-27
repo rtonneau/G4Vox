@@ -9,11 +9,11 @@ namespace G4Vox
     namespace Quantities
     {
 
-        class QuantityTrackLength;
+        class TrackLength;
 
         class AccumulableTrackLength : public VVoxQuantityAccumulable
         {
-            friend class QuantityTrackLength; // for data access
+            friend class TrackLength; // for data access
 
         public:
             // Inherit constructor from base class
@@ -29,10 +29,10 @@ namespace G4Vox
             array_type fTotLength; // Total track length in the voxel, used for track length calculation
         };
 
-        class QuantityTrackLength : public VVoxQuantity
+        class TrackLength : public VVoxQuantity
         {
         public:
-            QuantityTrackLength() : VVoxQuantity("TrackLength") {}
+            TrackLength() : VVoxQuantity("TrackLength") {}
 
             VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
 

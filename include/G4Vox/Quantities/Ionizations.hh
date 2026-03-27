@@ -11,7 +11,7 @@ namespace G4Vox
 
         class AccumulableIonizations : public VVoxQuantityAccumulable
         {
-            friend class QuantityIonizations; // for data access
+            friend class Ionizations; // for data access
         public:
             // Inherit constructor from base class
             using VVoxQuantityAccumulable::VVoxQuantityAccumulable;
@@ -21,10 +21,10 @@ namespace G4Vox
             size_t FlattenVoxelIndex(const VoxelIndex &v) const override;
         };
 
-        class QuantityIonizations : public VVoxQuantity
+        class Ionizations : public VVoxQuantity
         {
         public:
-            QuantityIonizations() : VVoxQuantity("Ionizations") {}
+            Ionizations() : VVoxQuantity("Ionizations") {}
 
             VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
 

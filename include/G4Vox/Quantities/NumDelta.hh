@@ -11,7 +11,7 @@ namespace G4Vox
 
         class AccumulableNumDelta : public VVoxQuantityAccumulable
         {
-            friend class QuantityNumDelta; // for data access
+            friend class NumDelta; // for data access
         public:
             // Inherit constructor from base class
             using VVoxQuantityAccumulable::VVoxQuantityAccumulable;
@@ -21,10 +21,10 @@ namespace G4Vox
             size_t FlattenVoxelIndex(const VoxelIndex &v) const override;
         };
 
-        class QuantityNumDelta : public VVoxQuantity
+        class NumDelta : public VVoxQuantity
         {
         public:
-            QuantityNumDelta() : VVoxQuantity("NumDelta") {}
+            NumDelta() : VVoxQuantity("NumDelta") {}
 
             VVoxQuantityAccumulable *UserCreateAccumulable(const G4String &name) const override;
 
